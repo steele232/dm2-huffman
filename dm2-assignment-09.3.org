@@ -229,6 +229,14 @@
   (defun set-right (node right)
     (and (symbolp node) (symbolp right) (put node :right right)))
 
+  (defun link-children-and-parent (parent left right)
+    (and (symbolp parent) (symbolp left) (symbolp right)
+      (progn
+        (put parent :left left)
+        (put parent :right right)
+        (put left :parent parent)
+        (put right :parent parent))))
+
   (defun build-tree (height)
     (let ((root (make-node)))
       (if (> height 0)
@@ -459,6 +467,25 @@
   ;; have n0+ names rather than much larger ones.
   (setq node-counter 0)
 
+  (defun make-node ()
+    (let ((symbol (intern (concat "n" (number-to-string node-counter)))))
+      (setf (symbol-plist symbol) nil)
+      (set symbol node-counter)
+      (incf node-counter)
+      symbol))
+
+  (defun make-node-with-properties (length frequency)
+    (let ((symbol (intern (concat "n" (number-to-string node-counter)))))
+      ;; clear property list of interned symbol
+      (setf (symbol-plist symbol) nil)
+      (set symbol node-counter)
+      ;; set the gap-length (of the node) in the node's plist
+      (put symbol :gap-length length)
+      ;; set the frequency (of the node) in the node's plist
+      (put symbol :frequency frequency)
+      (incf node-counter)
+      symbol))
+
   ;; Here is a let that we will probably change into
   ;; a  function soon.
   (setq exp-node-list (let* ((ft f-table))
@@ -466,12 +493,8 @@
           using (hash-value value)
           collect (let* ((k key)
                          (v value)
-                         (new-node (make-node)))
+                         (new-node (make-node k v)))
                         (set-value new-node v)
-                        ;; set the gap-length (of the node) in the node's plist
-                        (put new-node :gap-length k)
-                        ;; set the frequency (of the node) in the node's plist
-                        (put new-node :frequency v)
                         new-node
                     )
           )
@@ -509,12 +532,8 @@
           using (hash-value value)
           collect (let* ((k key)
                          (v value)
-                         (new-node (make-node)))
+                         (new-node-with-properties (make-node k v)))
                     (set-value new-node v)
-                    ;; set the gap-length (of the node) in the node's plist
-                    (put new-node :gap-length k)
-                    ;; set the frequency (of the node) in the node's plist
-                    (put new-node :frequency v)
                     new-node
                     )
           )
@@ -603,14 +622,11 @@ NOTES FROM the Textbook:
         (pop Q)
         (setq TR (car Q))
         (pop Q)
-        (setq T (make-node)) ;; could use intern.. ??
+        (setq T (make-node)) ;; now using intern
         (set-value T
                    (+ (get-value TL)
                       (get-value TR)))
-        (set-left T TL)
-        (set-right T TR)
-        (set-parent TL T)
-        (set-parent TR T)
+        (link-parent-and-children T TL TR)
         (setq Q (cons T Q))
         ;;(setq sum (+ 1 sum)) ;; count how many iterations we get through..
         )
