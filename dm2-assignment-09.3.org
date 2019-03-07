@@ -697,8 +697,7 @@ n206
 (length list-of-nodes) 18
 (length backup-list-of-nodes) 104
 list-of-nodes (n0 n1 n192 n193 n6 n194 n195 n196 n2 n197 n198 n199 n200 n201 n202 n203 n204 n205)
-
-
+backup-list-of-nodes (n0 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n16 n17 n18 n19 n20 n21 n22 n23 n24 n25 n26 n27 n28 n29 n30 n31 n32 n33 n34 n35 n36 n37 n38 n39 n40 n41 n42 n43 n44 n45 n46 n47 n48 n49 n50 n51 n52 n53 n54 n55 n56 n57 n58 n59 n60 n61 n62 n63 n64 n65 n66 n67 n68 n69 n70 n71 n72 n73 n74 n75 n76 n77 n78 n79 n80 n81 n82 n83 n84 n85 n86 n87 n88 n89 n90 n91 n92 n93 n94 n95 n96 n97 n98 n99 n100 n101 n102 n103)
 
 ===> RESET BUTTON 
 - don't necessarily need to run this before moving to the next section.
@@ -745,22 +744,42 @@ list-of-nodes (n0 n1 n192 n193 n6 n194 n195 n196 n2 n197 n198 n199 n200 n201 n20
 #+RESULTS:
 : ((2 . 1100) (4 . 1101) (6 . 100) (8 . 0101) (14 . 0100) (10 . 1011) (12 . 000) (18 . 0111) (20 . 10101) (22 . 01101) (34 . 011000) (24 . 0010) (16 . 11100) (26 . 111110) (28 . 111111) (30 . 11101) (32 . 001110) (36 . 111101) (44 . 0011111) (42 . 101000) (40 . 001100) (52 . 01100111) (48 . 1010010) (38 . 1010011) (72 . 011001011) (50 . 11110001) (62 . 011001010) (54 . 0011110) (60 . 11110011) (58 . 00110101) (46 . 11110010) (56 . 01100100) (64 . 011001100) (68 . 1111000010) (86 . 00110100100) (66 . 00110110) (70 . 011001101) (78 . 001101000) (76 . 0011011101) (82 . 11110000001) (96 . 00110111000) (112 . 11110000110100) (100 . 001101111001) (74 . 0011011111) (90 . 0011010011) (84 . 1111000001) (114 . 0011011110111) (80 . 11110000111) (88 . 00110100101) (98 . 001101110011) (92 . 111100000000) (106 . 0011011100101) (94 . 001101111010) (118 . 111100001101011) (132 . 111100001100100) (104 . 1111000011000) (102 . 111100000001) (110 . 0011011110000) (126 . 00110111101100) (120 . 0011011110001) (148 . 00110111101101001) (108 . 1111000011011) (122 . 001101111011011) (138 . 1111000011010101) (128 . 1111000011001110) (154 . 111100001100101110) (130 . 001101110010010) (116 . 00110111001000) (146 . 111100001101010000) (136 . 11110000110101001) (124 . 111100001100110) (134 . 0011011110110101) (140 . 1111000011001010) (152 . 00110111001001100) (142 . 11110000110011110) (144 . 0011011100100111) (150 . 11110000110011111) (180 . 11110000110010110011) (156 . 00110111101101000) (164 . 1111000011001011011) (210 . 001101110010011011111) (170 . 1111000011001011000) (160 . 1111000011010100011) (182 . 111100001100101111010) (168 . 1111000011010100010) (176 . 11110000110010111110) (172 . 001101110010011011100) (162 . 001101110010011010) (178 . 11110000110010111111) (198 . 00110111001001101100) (220 . 00110111001001101101100) (158 . 1111000011001011010) (174 . 11110000110010111100) (196 . 00110111001001101101101) (184 . 001101110010011011101) (166 . 11110000110010110010) (202 . 0011011100100110110111) (204 . 1111000011001011110110) (222 . 00110111001001101111010) (192 . 1111000011001011110111) (188 . 00110111001001101111011) (190 . 00110111001001101111000) (186 . 001101110010011011010) (194 . 00110111001001101111001))
 
+(subseq gap-code-table 0 4) ((2 . "1100") (4 . "1101") (6 . "100") (8 . "0101"))
 
 *** Encode the Data (the first-ten-million-primes (List-of-Gaps))
 
 (length list-of-gaps) 9999998
+(length
 --> Helper func. Get it working.
 
-#+BEGIN_SRC elisp
-  (defun get-code-of-gap (gapStr)
-    (let ((gapNum (string-to-number gapStr))
-          (code ""))
-      (loop for pair in list-of-gaps
-            do 
-            (
-    
-    )
+#+BEGIN_SRC elisp :results silent
+  (defun get-code-of-gap (gapNum)
+    (cdr (assoc gapNum gap-code-table))
+  )
 #+END_SRC
+
+(get-code-of-gap 12) "000" "000" "100" "1101" "1100" 
+(get-code-of-gap 12) "000" "1101" "100" "1100"
+
+
+
+---> A SLOW way to do this!
+#+BEGIN_SRC elisp
+  (defun get-code-of-gap-SLOW (gapNum)
+    (let ((code ""))
+      (loop for gap-code-pair in gap-code-table
+            do 
+            (if (= gapNum (car gap-code-pair))
+              (setq code (cdr gap-code-pair))))
+      code
+    ))
+#+END_SRC
+
+#+RESULTS:
+: get-code-of-gap-SLOW
+
+
+--> ENCODE FUNCTION (SLOW)
 #+BEGIN_SRC elisp :results silent
 
 
@@ -775,11 +794,38 @@ list-of-nodes (n0 n1 n192 n193 n6 n194 n195 n196 n2 n197 n198 n199 n200 n201 n20
   (let* ((enc-str "")) 
     ;; Maybe think about making a hashtable out of the list so for faster access.
     (loop for gap in list-of-gaps do
-          (let 
-    
+          (let ((code (get-code-of-gap gap)))
+            (setq enc-str
+              (concat enc-str code))))
     enc-str)
     
 #+END_SRC
+
+--> ENCODE FUNCTION (FAST)
+---> Some serious help from Bro Neff here. 
+#+BEGIN_SRC elisp :results silent
+  (defun get-encoded-primes () 
+    (mapconcat
+      ;; FUNCTION
+      (lambda (gap-size) (get-code-of-gap gap-size))
+      ;; SEQUENCE
+      list-of-gaps
+      ;; SEPARATOR
+      ""
+      )
+    )
+#+END_SRC
+
+#+BEGIN_SRC elisp
+  (setq encoded-primes (get-encoded-primes)
+        len-encoded (length encoded-primes))
+#+END_SRC
+
+#+RESULTS:
+: 44712373
+
+(/ len-encoded 1000) 44712 ;; about 44mb
+
 
 ** Calculate Size of File
 
@@ -843,7 +889,7 @@ list-of-nodes (n0 n1 n192 n193 n6 n194 n195 n196 n2 n197 n198 n199 n200 n201 n20
   - [X] I wrote an elisp function to get-a-gap-code-table that takes a Huffman
     tree (or a list-of-nodes) and returns a code-list as a list of (gap . code)
     cons cells.
-  - [ ] I wrote an elisp function to encode the data given the list-of-gaps and
+  - [X] I wrote an elisp function to encode the data given the list-of-gaps and
     the code-list.
   - [ ] I wrote an elisp function to encapsulate the above-mentioned elisp
     functions (in order) in one encode-first-ten-million-primes function that
