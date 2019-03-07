@@ -648,10 +648,12 @@ n206
     ""
     nil)
 
-
-  (let* ((root ))
- 
-    nil)
+  (let* ((nodes list-of-nodes))
+    (loop for node in nodes
+     collect 
+       (list (get-value node)
+             (symbol-plist node)
+             )))
 
 #+END_SRC
 
