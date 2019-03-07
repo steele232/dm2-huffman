@@ -502,20 +502,7 @@
 #+END_SRC
 
 --> ALTERNATE make-node function
-#+BEGIN_SRC elisp :results silent
 
-  (defun make-node-alt ()
-    (let ((symbol (intern (concat "n" (number-to-string node-counter)))))
-      (set symbol node-counter)
-      (incf node-counter)
-      symbol))
-#+END_SRC
-#+BEGIN_SRC elisp
-  (setq play-node (make-node-alt))
-#+END_SRC
-
-#+RESULTS:
-: n207
 (setq pht (make-hash-table)) #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8125 data ())
 (get pht 'size)  
 (symbol-plist pht) 
@@ -713,7 +700,8 @@ list-of-nodes (n0 n1 n192 n193 n6 n194 n195 n196 n2 n197 n198 n199 n200 n201 n20
 
 
 
-===> RESET BUTTON
+===> RESET BUTTON 
+- don't necessarily need to run this before moving to the next section.
 #+BEGIN_SRC elisp
   (setq list-of-nodes (make-node-list-from-table f-table))
 #+END_SRC
@@ -738,40 +726,60 @@ list-of-nodes (n0 n1 n192 n193 n6 n194 n195 n196 n2 n197 n198 n199 n200 n201 n20
   ;; Add 1's when you go RIGHT,
   ;; GENERATE A BIT STRING FOR EVERY LEAF-NODE (not  (AND ADD TO THE LIST)
 
-  (defun get-a-gap-code-table (htree-root)
+  (defun get-a-gap-code-table ()
     ""
-    nil)
-
-  (let* ((nodes list-of-nodes))
-    (loop for node in nodes
-     collect 
-       (list (get-value node)
-             (symbol-plist node)
-             )))
+    (let* ((nodes backup-list-of-nodes))
+      (loop for node in nodes
+            collect 
+            (cons (get node :gap-length)
+                  (get node :code)
+                  ))))
 
 #+END_SRC
 
 -> This is the usage..
 #+BEGIN_SRC elisp
-  (setq gap-code-table (get-a-gap-code-table huffman-tree))
+  (setq gap-code-table (get-a-gap-code-table))
 #+END_SRC
 
 #+RESULTS:
+: ((2 . 1100) (4 . 1101) (6 . 100) (8 . 0101) (14 . 0100) (10 . 1011) (12 . 000) (18 . 0111) (20 . 10101) (22 . 01101) (34 . 011000) (24 . 0010) (16 . 11100) (26 . 111110) (28 . 111111) (30 . 11101) (32 . 001110) (36 . 111101) (44 . 0011111) (42 . 101000) (40 . 001100) (52 . 01100111) (48 . 1010010) (38 . 1010011) (72 . 011001011) (50 . 11110001) (62 . 011001010) (54 . 0011110) (60 . 11110011) (58 . 00110101) (46 . 11110010) (56 . 01100100) (64 . 011001100) (68 . 1111000010) (86 . 00110100100) (66 . 00110110) (70 . 011001101) (78 . 001101000) (76 . 0011011101) (82 . 11110000001) (96 . 00110111000) (112 . 11110000110100) (100 . 001101111001) (74 . 0011011111) (90 . 0011010011) (84 . 1111000001) (114 . 0011011110111) (80 . 11110000111) (88 . 00110100101) (98 . 001101110011) (92 . 111100000000) (106 . 0011011100101) (94 . 001101111010) (118 . 111100001101011) (132 . 111100001100100) (104 . 1111000011000) (102 . 111100000001) (110 . 0011011110000) (126 . 00110111101100) (120 . 0011011110001) (148 . 00110111101101001) (108 . 1111000011011) (122 . 001101111011011) (138 . 1111000011010101) (128 . 1111000011001110) (154 . 111100001100101110) (130 . 001101110010010) (116 . 00110111001000) (146 . 111100001101010000) (136 . 11110000110101001) (124 . 111100001100110) (134 . 0011011110110101) (140 . 1111000011001010) (152 . 00110111001001100) (142 . 11110000110011110) (144 . 0011011100100111) (150 . 11110000110011111) (180 . 11110000110010110011) (156 . 00110111101101000) (164 . 1111000011001011011) (210 . 001101110010011011111) (170 . 1111000011001011000) (160 . 1111000011010100011) (182 . 111100001100101111010) (168 . 1111000011010100010) (176 . 11110000110010111110) (172 . 001101110010011011100) (162 . 001101110010011010) (178 . 11110000110010111111) (198 . 00110111001001101100) (220 . 00110111001001101101100) (158 . 1111000011001011010) (174 . 11110000110010111100) (196 . 00110111001001101101101) (184 . 001101110010011011101) (166 . 11110000110010110010) (202 . 0011011100100110110111) (204 . 1111000011001011110110) (222 . 00110111001001101111010) (192 . 1111000011001011110111) (188 . 00110111001001101111011) (190 . 00110111001001101111000) (186 . 001101110010011011010) (194 . 00110111001001101111001))
 
---> 
+
+*** Encode the Data (the first-ten-million-primes (List-of-Gaps))
+
+(length list-of-gaps) 9999998
+--> Helper func. Get it working.
+
+#+BEGIN_SRC elisp
+  (defun get-code-of-gap (gapStr)
+    (let ((gapNum (string-to-number gapStr))
+          (code ""))
+      (loop for pair in list-of-gaps
+            do 
+            (
+    
+    )
+#+END_SRC
 #+BEGIN_SRC elisp :results silent
 
-  (let* ((nodes list-of-nodes))
-    (loop for node in nodes
-     collect 
-       (cons (get node :gap-length)
-             (get node :code)
-             )))
 
+  ;;;; PSEUDOCODE
+  ;; Start an empty string
+  ;; Loop through the list of gaps
+    ;; for the given gap
+    ;; find the code associated with that gap.
+    ;; append that code to the accumulated encoded string.
+
+
+  (let* ((enc-str "")) 
+    ;; Maybe think about making a hashtable out of the list so for faster access.
+    (loop for gap in list-of-gaps do
+          (let 
+    
+    enc-str)
+    
 #+END_SRC
-
-
-*** :ww
 
 ** Calculate Size of File
 
@@ -832,7 +840,7 @@ list-of-nodes (n0 n1 n192 n193 n6 n194 n195 n196 n2 n197 n198 n199 n200 n201 n20
     table-of-frequencies and returns a list of nodes.
   - [X] I wrote an elisp function to make-huffman-tree that takes the
     list-of-nodes and returns a Huffman tree.
-  - [ ] I wrote an elisp function to get-a-gap-code-table that takes a Huffman
+  - [X] I wrote an elisp function to get-a-gap-code-table that takes a Huffman
     tree (or a list-of-nodes) and returns a code-list as a list of (gap . code)
     cons cells.
   - [ ] I wrote an elisp function to encode the data given the list-of-gaps and
