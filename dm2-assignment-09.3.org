@@ -437,7 +437,8 @@
    '<)
 #+END_SRC
 
---> Example of maphash function
+--> Example of maphash function 
+(EXCEPT it Returns NIL has no other collection mechanism)
 #+BEGIN_SRC elisp :results silent
   (maphash (lambda (key val)
             (list "cstring" key val))
@@ -500,6 +501,39 @@
   
 #+END_SRC
 
+--> ALTERNATE make-node function
+#+BEGIN_SRC elisp :results silent
+
+  (defun make-node-alt ()
+    (let ((symbol (intern (concat "n" (number-to-string node-counter)))))
+      (set symbol node-counter)
+      (incf node-counter)
+      symbol))
+#+END_SRC
+#+BEGIN_SRC elisp
+  (setq play-node (make-node-alt))
+#+END_SRC
+
+#+RESULTS:
+: n207
+(setq pht (make-hash-table)) #s(hash-table size 65 test eql rehash-size 1.5 rehash-threshold 0.8125 data ())
+(get pht 'size)  
+(symbol-plist pht) 
+(put pht :left 5) 
+(put blah :left 5) 
+(setq blah (make-symbol "haha")) ==> haha ;; evaluates as the symbol, the string of it..
+(symbol-plist blah) nil 
+(symbol-function blah) nil
+(symbol-name blah) "haha"
+(symbol-plist blah) nil
+blah ==> haha
+haha ;; symbol's value as a variable is void.
+(intern-soft blah) nil
+haha ;; symbol'v value as a variable is (still void)
+blah
+n207 207
+(symbol-plist n207) 
+
 ---> Here is the actual Function make-node-list-from-table
 #+BEGIN_SRC elisp :results silent
   (defun make-node-list-from-table (ft)
@@ -552,9 +586,7 @@ NOTES FROM the Textbook:
 - Just to re-affirm, higher-frequency nodes (gaps) should be near the top
   (root) of the tree. 
 
--> A repeated block to make it easy to re=evaluate this ...
-#+BEGIN_SRC elisp :results silent
-#+END_SRC
+--> 
 #+BEGIN_SRC elisp :results silent
 
 
@@ -585,6 +617,31 @@ NOTES FROM the Textbook:
     ;; and weight equal to the sum of TL's weight and TR's weight.
     ;; Insert T into Q (it will be sorted by next time..)
   ;; Return T (Q's first and only element?)
+  (defun append-code-to-subtree (strCode node)
+    "" 
+    
+    ;; add it to this tree
+    ;; pass it on to the children if they exist..
+    (if (not (eq nil (get node :left))) 
+      (append-code-to-subtree strCode 
+        (get node :left)))
+    (if (not (eq nil (get node :right)))
+      (append-code-to-subtree strCode 
+        (get node :right)))
+    (if (eq nil (get node :code)) (put node :code ""))
+    (put node :code 
+      (concat strCode 
+              (get node :code))))
+
+#+END_SRC
+
+-> Let's try to see how it's going..
+#+BEGIN_SRC elisp :results silent
+  
+#+END_SRC
+
+
+#+BEGIN_SRC elisp :results silent
 
   (defun sym-greater-than (n1 n2)
     (and (symbolp n1) (symbolp n2)
@@ -611,24 +668,61 @@ NOTES FROM the Textbook:
         (set-right T TR)
         (set-parent TL T)
         (set-parent TR T)
+        ;; HANDLE tree-leaves (initialize code to "")
+        (if (eq nil (get TL :code)) (put TL :code ""))
+        (if (eq nil (get TR :code)) (put TR :code ""))
+        ;; add "0" to all SUBTREES on the LEFT LEFTs
+        (append-code-to-subtree "0" TL)
+        ;; add "1" to all RIGHTs
+        (append-code-to-subtree "1" TR)
+        ;; determine 
+        
         (setq Q (cons T Q))
         ;;(setq sum (+ 1 sum)) ;; count how many iterations we get through..
         )
 
-      (car Q)))
+      (car Q)
+      ))
 
 #+END_SRC
 #+BEGIN_SRC elisp
   ;; we will redo the list-of-nodes (which restarts the node-counter.
   (setq list-of-nodes (make-node-list-from-table f-table))
+  (setq backup-list-of-nodes
+    (loop for sym in list-of-nodes
+          collect sym))
   (setq huffman-tree (make-huffman-tree list-of-nodes))
 #+END_SRC
 #+RESULTS:
 : n206
 n206 
 (symbol-value n206) 
-(symbol-value huffman-tree) 9999998
+(symbol-value huffman-tree) 
 (symbol-plist huffman-tree) (:left n204 :right n205)
+(get huffman-tree :left) 
+
+--> Let's play with the results..
+#+BEGIN_SRC elisp :results silent
+  (loop for s in backup-list-of-nodes
+        collect (symbol-plist s))
+#+END_SRC
+
+(length list-of-nodes) 18
+(length backup-list-of-nodes) 104
+list-of-nodes (n0 n1 n192 n193 n6 n194 n195 n196 n2 n197 n198 n199 n200 n201 n202 n203 n204 n205)
+
+
+
+===> RESET BUTTON
+#+BEGIN_SRC elisp
+  (setq list-of-nodes (make-node-list-from-table f-table))
+#+END_SRC
+
+#+RESULTS:
+| n0 | n1 | n2 | n3 | n4 | n5 | n6 | n7 | n8 | n9 | n10 | n11 | n12 | n13 | n14 | n15 | n16 | n17 | n18 | n19 | n20 | n21 | n22 | n23 | n24 | n25 | n26 | n27 | n28 | n29 | n30 | n31 | n32 | n33 | n34 | n35 | n36 | n37 | n38 | n39 | n40 | n41 | n42 | n43 | n44 | n45 | n46 | n47 | n48 | n49 | n50 | n51 | n52 | n53 | n54 | n55 | n56 | n57 | n58 | n59 | n60 | n61 | n62 | n63 | n64 | n65 | n66 | n67 | n68 | n69 | n70 | n71 | n72 | n73 | n74 | n75 | n76 | n77 | n78 | n79 | n80 | n81 | n82 | n83 | n84 | n85 | n86 | n87 | n88 | n89 | n90 | n91 | n92 | n93 | n94 | n95 | n96 | n97 | n98 | n99 | n100 | n101 | n102 | n103 |
+
+
+
 
 *** Get-A-Gap-Code-Table
 
@@ -664,17 +758,20 @@ n206
 
 #+RESULTS:
 
+--> 
+#+BEGIN_SRC elisp :results silent
 
---> Recursion Practice
-#+BEGIN_SRC elisp
-  (defun rec-ess 
+  (let* ((nodes list-of-nodes))
+    (loop for node in nodes
+     collect 
+       (cons (get node :gap-length)
+             (get node :code)
+             )))
+
 #+END_SRC
 
--->maphash practice
-#+BEGIN_SRC elisp
-  (
-#+END_SRC
 
+*** :ww
 
 ** Calculate Size of File
 
