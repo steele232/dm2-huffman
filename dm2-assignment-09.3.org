@@ -772,7 +772,6 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
 
    94%
 
-** Study and Extend Some Sample Code
 ** Connections
 
    I was first exposed to Huffman Codes in CS235.
