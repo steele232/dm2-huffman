@@ -822,7 +822,7 @@ https://docs.google.com/spreadsheets/d/1gE7EWgS4wIwk83Ihqh6C-AOfHSLGAsq9a2HcooQc
 | Dylan Doelling       | YES                      | helped created get-a-gap-code-table                                                |                                 |
 | Justin Bengtson      |                          | Working on finding improvements and MIs                                            |                                 |
 | Chase Jacobs         | YES                      | Worked on the "CLEAN UP" todo, as well as changed assertions to be classwide       |                                 |
-| Jonathon Dawson      |                          |                                                                                    |                                 |
+| Jonathon Dawson      | YES                      | Worked on finding MIs                                                              |                                 |
 | Grayson Hadley       | YES                      | Verfied the "make-huffman-tree" function using the list of nodes                   | Created "get-ancestry" function |
 | Ryan Gewondjan       | YES                      | Worked on the "CLEAN UP" todo, as well as changed assertions to be classwide       |                                 |
 | Curtis Wakley        | YES                      | Worked on having "make-node-list-from-table" produce a maphash w/ Jon Comeau       |                                 |
@@ -848,13 +848,13 @@ https://docs.google.com/spreadsheets/d/1gE7EWgS4wIwk83Ihqh6C-AOfHSLGAsq9a2HcooQc
 | Matt Wyndham         | YES                      | Worked on Compression Ratios sections and helped verify Huffman Encoding           | Compression Ratios sections     |
 | Brendon Welker       |                          |                                                                                    |                                 |
 | Tyler Brundage       |                          |                                                                                    |                                 |
-| Andrew Payne         |                          |                                                                                    |                                 |
+| Andrew Payne         | YES                      | Checking for and correcting MIs                                                    |                                 |
 | Samuel Tew           | YES                      | helped created get-a-gap-code-table                                                |                                 |
 | Paul Land            |                          | Working on finding improvements and MIs                                            |                                 |
 | Greg De Ligne        |                          | Working on finding improvements and MIs                                            |                                 |
 |                      |                          |                                                                                    |                                 |
 |                      |                          |                                                                                    |                                 |
-|                      | 63.89% Participation     |                                                                                    |                                 |
+|                      | 69.44% Participation     |                                                                                    |                                 |
 
 
 * TODO What Is True?
