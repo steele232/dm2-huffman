@@ -242,16 +242,12 @@
 #+END_SRC
 
 * My Report
-
-
 ** Explore Huffman Trees and Huffman Codes
 *** Make-Frequency-Table
 
 #+BEGIN_SRC elisp
-
   (setq list-of-gaps (list-the-gaps)
         len (length list-of-gaps))
-
 #+END_SRC
 
 #+RESULTS:
@@ -312,12 +308,11 @@
 
 #+END_SRC
 
-#+name: f-org-table
 #+BEGIN_SRC elisp
   (setq freq-table (make-freq-LoL))
 #+END_SRC
 
-#+RESULTS: f-org-table
+#+name: f-org-table
 |   2 |  738597 |
 |   4 |  738717 |
 |   6 | 1297540 |
@@ -675,13 +670,161 @@ n206
   (
 #+END_SRC
 
+** Calculate Compression Ratios (and sizes)
+*** number of keys in the hashtable of gap sizes
+   : I correctly calculated the number of keys in the hashtable of gap sizes.
 
-** Calculate Size of File
+#+BEGIN_SRC elisp :var ft=f-org-table
+; how many different keys we must encode
+(length ft)
+#+END_SRC
 
+#+RESULT:
+: 104
+
+*** bits per key with fixed encoding
+   : I correctly calculated the number of bits per key with a fixed encoding. 
+   There are 104 different keys in our hashtable so we need ceiling(log_{2}104)
+   bits to hold them all. There will be some unused bits afterwards, but we will
+   be able to represent every key in our table with a unique bitcode.
+
+   | # bits | max # keys |
+   |--------+------------|
+   |      1 |          2 |
+   |      2 |          4 |
+   |      3 |          8 |
+   |      4 |         16 |
+   |      5 |         32 |
+   |      6 |         64 |
+   |      7 |        128 | <-- This is greater than 104 so we have our number!
+
+   So we will need *7* bits to represent every key code in our hash table of
+   spaces between prime numbers.
+
+   For example:
+
+   | key | bitcode |
+   |-----+---------|
+   |   2 | 0000001 |
+   |   4 | 0000010 |
+   |   6 | 0000011 |
+   |   8 | 0000100 |
+   |  14 | 0000101 |
+   |  10 | 0000110 |
+   |  12 | 0000111 |
+   |  18 | 0001000 |
+   |  20 | 0001001 |
+   |  22 | 0001010 |
+   |  34 | 0001011 |
+   |  24 | 0001100 |
+   |  16 | 0001101 |
+   |  26 | 0001110 |
+   |  28 | 0001111 |
+   |  30 | 0010000 |
+   |     |    etc. |
+ 
+*** TODO total number of bits (huffman encoding)
+*** total number of bits (fixed key encoding)
+   : I correctly calculated the total number of bits encoded with the fixed 
+   : encoding. 
+  
+   So that is our encoding scheme, now how do we encode all 10 million primes?
+   Well we just need to write down the spaces between the primes, so we would
+   need 9,999,999 consecutive sections of 7 bits; where each 7 bit segment
+   encodes the jump from the previous prime number to the next prime number. We
+   only need one less than the number of numbers because the last prime number
+   does not need a 7-bit jump to the 10,000,001^st prime number.
+
+   7 x 9,999,999 = *69,999,993* bits
+
+*** total number of bits (32-Binary encoding)
+   : I correctly calculated the size of the first ten million primes encoded
+   : as 32-bit integer binary data.
+
+   Each prime number is a 32-bit integer (binary), and there are 10 million
+   primes, that means there are 32 x 10 million = *320,000,000* bits used.
+
+*** total number of bits (ASCII encoding)
+   : I correctly calculated the size of the first ten million primes encoded
+   : as ASCII data.
+   
+   Extended ASCII (which most OS use now) uses 8 bits per character, so with 10
+   million primes, each with at least one character, that's already 80 million
+   bits. In addition to that (in windows) there are two whitespace characters
+   (CRLF) at the end of each line, so that's an additional 8 x 10,000,000 x 2 =
+   160,000,000 bits!
+
+   There we already have 240,000,000 bits, and that doesn't even take into
+   account the number of characters required for each prime number. The biggest
+   prime (17,9424,673) uses 9 characters (without commas) and so requires 72
+   bits all to itself!
+
+  #+BEGIN_SRC elisp
+    ;(require 'cl)
+    ;(require 'first-ten-million-primes)
+
+    ; code to calculate the number of bits in the ascii representations of numbers
+    (loop for i from 1 upto (1- (length first-ten-million-primes)) do (setq curr (elt first-ten-million-primes i)) sum (- (loop for char in (split-string (number-to-string curr) "") count char) 2))
+
+    ; floor(log_10 n) + 1 this would simplify my second loop quite a bit: sum (1+
+    ; (floor (log_10 curr)))
+  #+END_SRC
+
+   #+RESULT:
+   : 83,484,449 characters in the list of primes
+
+   #+BEGIN_SRC elisp
+   ; spacemacs adds an extra LF at the end of the file
+   ; multiply by 8 because ASCII characters are each a byte
+
+   ; windows machine
+   ; whitespace characters are x2 because windows uses CRLF
+   ;(* (1+ (+ 83484449 (* 10000000 2))) 8)
+
+   ; unix machine
+   ; whitespace characters are one per prime (LF)
+   (* (1+ (+ 83484449 10000000)) 8)
+
+   ; just the primes
+   (* 83484449 8)
+   #+END_SRC
+
+   #+RESULT-JUST-THE-PRIMES:
+   : 667,875,592
+
+   #+RESULT-IN-UNIX:
+   : 747,875,600
+
+   #+RESULT-IN-WINDOWS:
+   : 827,875,600
+
+   Theoretically, the resulting ASCII encoding should be 827,875,592 bits, but
+   vi and other editors append an extra (LF) character to the end of your file,
+   so 827,875,600 bits.
+
+   Checking in a windows system we find the resulting size of ASCII characters
+   to represent these primes is 827,875,600 bits as a text file in windows,
+   which is exactly what we expected!
+
+   In a Unix style operating system the line ending would be encoded as (LF)
+   only and will result in a smaller file: 747,875,600 bits.
+
+   After discussion in class we will use the Unix encoding (with the extra LF
+   from emacs file creation) *747,875,600* bits.
+
+   Just the primes = 667,875,592 bits (with no (CR) or (LF) characters)
+
+*** TODO Compression Ratio (fixed to huffman)
+   : I correctly calculated the compression ratio from this fixed encoding.
+
+*** TODO Compression Ratio (binary to huffman)
+   : I correctly calculated the compression ratio from the binary size.
+
+*** TODO Compression Ratio (ASCII to huffman)
+   : I correctly calculated the compression ratio from the ASCII size (just
+   : the primes, nothing else).
 
 ** Study and Extend Some Sample Code
-
-
 ** Connections
 
    I was first exposed to Huffman Codes in CS235.
@@ -690,12 +833,7 @@ n206
    how they work.
 
 ** Contributors
-
-   - Grayson
-   - Taylor
-   - Luke
-   - Bro Neff
-
+   Everyone in the class!
 
 * TODO What Is True?
    This is a tool that allows you to assess yourself on how you did
@@ -743,17 +881,17 @@ n206
   - [ ] I wrote an elisp function to encapsulate the above-mentioned elisp
     functions (in order) in one encode-first-ten-million-primes function that
     takes no parameters.
-  - [ ] I correctly calculated the number of keys in the hashtable of gap sizes.
-  - [ ] I correctly calculated the number of bits per key with a fixed encoding.
+  - [X] I correctly calculated the number of keys in the hashtable of gap sizes.
+  - [X] I correctly calculated the number of bits per key with a fixed encoding.
   - [ ] I correctly calculated the total number of bits encoded with the Huffman
     encoding.
-  - [ ] I correctly calculated the total number of bits encoded with the fixed
+  - [X] I correctly calculated the total number of bits encoded with the fixed
     encoding.
   - [ ] I correctly calculated the compression ratio from this fixed encoding.
-  - [ ] I correctly calculated the size of the first ten million primes encoded
+  - [X] I correctly calculated the size of the first ten million primes encoded
     as 32-bit integer binary data.
   - [ ] I correctly calculated the compression ratio from the binary size.
-  - [ ] I correctly calculated the size of the first ten million primes encoded
+  - [X] I correctly calculated the size of the first ten million primes encoded
     as ASCII data.
   - [ ] I correctly calculated the compression ratio from the ASCII size (just
     the primes, nothing else).
