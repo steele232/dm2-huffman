@@ -267,7 +267,7 @@
 #+END_SRC
 
 #+RESULTS:
-: #s(hash-table size 145 test eql rehash-size 1.5 rehash-threshold 0.8125 data (2 738597 4 738717 6 1297540 8 566151 14 503524 10 729808 12 920661 18 667734 20 354267 22 307230 34 129043 24 453215 16 371677 26 211203 28 229177 30 398713 32 123123 36 206722 44 64866 42 159956 40 111546 52 38800 48 93693 38 94682 72 17255 50 52183 62 16763 54 64157 60 55305 58 27985 46 54931 56 32224 64 17374 68 12368 86 3411 66 30960 70 17475 78 13758 76 7253 82 4791 96 3544 112 711 100 1923 74 8540 90 7056 84 9818 114 1125 80 6760 88 3454 98 1831 92 2259 106 933 94 2058 118 433 132 301 104 1168 102 2374 110 941 126 533 120 948 148 67 108 1634 122 287 138 210 128 183 154 43 130 211 116 439 146 46 136 100 124 318 134 128 140 140 152 52 142 90 144 123 150 94 180 10 156 57 164 20 210 4 170 18 160 27 182 5 168 25 176 11 172 4 162 27 178 12 198 6 220 1 158 19 174 10 196 1 184 4 166 9 202 2 204 3 222 1 192 3 188 1 190 1 186 3 194 1))
+: #s(hash-table size 145 test eql rehash-size 1.5 rehash-threshold 0.8 data (2 738597 4 738717 6 1297540 8 566151 14 503524 10 729808 12 920661 18 667734 20 354267 22 307230 34 129043 24 453215 16 371677 26 211203 28 229177 30 398713 32 123123 36 206722 44 64866 42 159956 40 111546 52 38800 48 93693 38 94682 72 17255 50 52183 62 16763 54 64157 60 55305 58 27985 46 54931 56 32224 64 17374 68 12368 86 3411 66 30960 70 17475 78 13758 76 7253 82 4791 96 3544 112 711 100 1923 74 8540 90 7056 84 9818 114 1125 80 6760 88 3454 98 1831 92 2259 106 933 94 2058 118 433 132 301 104 1168 102 2374 110 941 126 533 120 948 148 67 108 1634 122 287 138 210 128 183 154 43 130 211 116 439 146 46 136 100 124 318 134 128 140 140 152 52 142 90 144 123 150 94 180 10 156 57 164 20 210 4 170 18 160 27 182 5 168 25 176 11 172 4 162 27 178 12 198 6 220 1 158 19 174 10 196 1 184 4 166 9 202 2 204 3 222 1 192 3 188 1 190 1 186 3 194 1))
 
 *** Make-Node-List-From-Table
 
@@ -290,9 +290,79 @@
 (We do it in a let here first for experimentation.)
 #+BEGIN_SRC elisp :results silent
 
+  (require 'cl)
+
+  (require 'first-ten-million-primes)
+
+  (defun list-the-gaps ()
+    "Create a list of the gaps between the first ten million primes.
+     Depends on the first-ten-million-primes vector."
+    (loop with curr = 0
+          with prev = 3
+          with gap = 0
+          for i from 2 upto (1- (length first-ten-million-primes))
+          do (setq curr (elt first-ten-million-primes i)
+                   gap (- curr prev)
+                   prev curr)
+          collect gap))
+
+  ; T3: Removed Brother Neff's make-node function
+
+  (defun get-value (node)
+    (and (symbolp node) (get node :frequency)))
+
+  (defun set-value (node new-value)
+    (and (symbolp node) (put node :frequency new-value)))
+
+  (defun get-parent (node)
+    (and (symbolp node) (get node :parent)))
+
+  (defun set-parent (node parent)
+    (and (symbolp node) (symbolp parent) (put node :parent parent)))
+
+  (defun get-left (node)
+    (and (symbolp node) (get node :left)))
+
+  (defun set-left (node left)
+    (and (symbolp node) (symbolp left) (put node :left left)))
+
+  (defun get-right (node)
+    (and (symbolp node) (get node :right)))
+
+  (defun set-right (node right)
+    (and (symbolp node) (symbolp right) (put node :right right)))
+
+  (defun link-children-and-parent (parent left right)
+    (and (symbolp parent) (symbolp left) (symbolp right)
+      (progn
+        (put parent :left left)
+        (put parent :right right)
+        (put left :parent parent)
+        (put right :parent parent))))
+
+  (defun build-tree (height)
+    (let ((root (make-node)))
+      (if (> height 0)
+          (let ((left (build-tree (1- height)))
+                (right (build-tree (1- height))))
+            (set-left root left)
+            (set-right root right)
+            (set-parent left root)
+            (set-parent right root)))
+      root))
+
+;    BELOW THIS LINE IS THE CODE THAT US STUDENTS HAVE WRITTTEN
+;---------------------------------------------------------------------
   ;; Set node-counter to 0 so that the nodes 
   ;; have n0+ names rather than much larger ones.
   (setq node-counter 0)
+
+  (defun make-frequency-table (lst-of-gaps)
+    "Make it!"
+    (let ((freq-table (make-hash-table)))
+      (loop for gap in lst-of-gaps
+            do (incf (gethash gap freq-table 0)))
+    freq-table))
 
   (defun make-node ()
     (let ((symbol (intern (concat "n" (number-to-string node-counter)))))
@@ -315,6 +385,132 @@
       (put symbol :code "")
       (incf node-counter)
       symbol))
+
+  (defun make-node-list-from-table (ft)
+    (setq node-counter 0)
+    (loop for key being the hash-keys of ft 
+          using (hash-value value)
+          collect (make-node-with-properties key value)))
+
+  (defun append-code-to-subtree (strCode node)
+    ;; add it to this tree
+    ;; pass it on to the children if they exist..
+    (if (not (eq nil (get node :left))) 
+      (append-code-to-subtree strCode 
+        (get node :left)))
+    (if (not (eq nil (get node :right)))
+      (append-code-to-subtree strCode 
+        (get node :right)))
+    (if (eq nil (get node :code)) (put node :code ""))
+    (put node :code 
+      (concat strCode 
+              (get node :code))))
+
+  (defun sym-greater-than (n1 n2)
+    (and (integerp (get-value n1)) (integerp (get-value n2))
+    (< (get-value n1) (get-value n2))))
+
+  ;;;; PSEUDOCODE ==> Supplied by Bro Neff in textbook.
+  ;; 
+  ;; Algorithm Huffman Tree (inputs and initialization of Q as above)
+  ;; while Q has more than one element do
+  ;;    TL ← the minimum-weight tree in Q
+  ;;    Delete the minimum-weight tree in Q
+  ;;    TR ← the minimum-weight tree in Q
+  ;;    Delete the minimum-weight tree in Q
+  ;;    Create a new tree T with TL and TR as its left and right subtrees,
+  ;;    and weight equal to the sum of TL’s weight and TR’s weight.
+  ;;    Insert T into Q.
+  ;; return T
+
+
+  (defun make-huffman-tree (lst-of-nodes) 
+    (let* ((Q lst-of-nodes)
+           (T nil)
+           (TL nil)
+           (TR nil)
+           (sum 0))
+      (while (> (length Q) 1)
+        (setq Q (sort Q 'sym-greater-than)) 
+        (setq TL (pop Q))
+        (setq TR (pop Q))
+        (setq T (make-node))
+        (set-value T
+                   (+ (get-value TL)
+                      (get-value TR)))
+        (link-children-and-parent T TL TR)
+        ;; HANDLE tree-leaves (initialize code to "")
+        (if (eq nil (get TL :code)) (put TL :code ""))
+        (if (eq nil (get TR :code)) (put TR :code ""))
+        ;; add "0" to all SUBTREES on the LEFT LEFTs
+        (append-code-to-subtree "0" TL)
+        ;; add "1" to all RIGHTs
+        (append-code-to-subtree "1" TR)
+        ;; determine 
+        
+        (setq Q (cons T Q))
+        ;;(setq sum (+ 1 sum)) ;; count how many iterations we get through..
+        )
+
+      (car Q)
+      ))
+
+  ;;;; PSEUDOCODE
+  ;; ==> get h-tree, return list of codes (gap . code)
+  ;; traverse the tree....
+  ;; build the code...
+  ;; START with an empty string.
+  ;; traverse the tree (recursive)
+  ;; Add 0's when you go LEFT, 
+  ;; Add 1's when you go RIGHT,
+  ;; GENERATE A BIT STRING FOR EVERY LEAF-NODE (not  (AND ADD TO THE LIST)
+  (defun get-a-gap-code-table ()
+    (let* ((nodes backup-list-of-nodes))
+      (loop for node in nodes
+            collect 
+            (cons (get node :gap-length)
+                  (get node :code)
+                  ))))
+
+  (defun get-code-of-gap (gapNum)
+    (cdr (assoc gapNum gap-code-table))
+  )
+
+  ;;;; PSEUDOCODE
+  ;; Start an empty string
+  ;; Loop through the list of gaps
+    ;; for the given gap
+    ;; find the code associated with that gap.
+    ;; append that code to the accumulated encoded string.
+  ;; Brother Neff Helped a lot with this.
+  (defun get-encoded-primes () 
+    (mapconcat
+      ;; FUNCTION
+      (lambda (gap-size) (get-code-of-gap gap-size))
+      ;; SEQUENCE
+      list-of-gaps
+      ;; SEPARATOR
+      ""))
+#+END_SRC
+
+#+BEGIN_SRC elisp
+  (setq list-of-gaps (list-the-gaps)
+        len (length list-of-gaps))
+
+  (setq f-table (make-frequency-table list-of-gaps))   
+
+  (setq list-of-nodes (make-node-list-from-table f-table))
+
+  (setq backup-list-of-nodes 
+    (loop for sym in list-of-nodes
+          collect sym))
+
+  (setq huffman-tree (make-huffman-tree list-of-nodes))
+  
+  (setq gap-code-table (get-a-gap-code-table))
+
+  (setq encoded-primes (get-encoded-primes)
+        len-encoded (length encoded-primes))
 
 #+END_SRC
 
@@ -392,17 +588,14 @@
 
   (defun make-huffman-tree (lst-of-nodes) 
     (let* ((Q lst-of-nodes)
-           (x t)
            (T nil)
            (TL nil)
            (TR nil)
            (sum 0))
       (while (> (length Q) 1)
         (setq Q (sort Q 'sym-greater-than)) 
-        (setq TL (car Q))
-        (pop Q)
-        (setq TR (car Q))
-        (pop Q)
+        (setq TL (pop Q))
+        (setq TR (pop Q))
         (setq T (make-node))
         (set-value T
                    (+ (get-value TL)
@@ -428,7 +621,7 @@
 #+BEGIN_SRC elisp
   ;; we will redo the list-of-nodes (which restarts the node-counter).
   (setq list-of-nodes (make-node-list-from-table f-table))
-  (setq backup-list-of-nodes ;; We 
+  (setq backup-list-of-nodes 
     (loop for sym in list-of-nodes
           collect sym))
   (setq huffman-tree (make-huffman-tree list-of-nodes))
@@ -521,7 +714,6 @@
     ;; for the given gap
     ;; find the code associated with that gap.
     ;; append that code to the accumulated encoded string.
-
 #+END_SRC
 
 --> ENCODING FUNCTION (Mapping Version)
@@ -883,3 +1075,6 @@ https://docs.google.com/spreadsheets/d/1gE7EWgS4wIwk83Ihqh6C-AOfHSLGAsq9a2HcooQc
      (about-MIs 2 2 2 2)
      (about-answers 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4))))
 #+END_SRC
+
+#+RESULTS:
+: 66
