@@ -476,6 +476,7 @@
 
   (defun make-node-with-properties (length frequency)
     (let ((symbol (intern (concat "n" (number-to-string node-counter)))))
+      ;; If the symbol already exists in the obarray, it may not have an empty property list
       ;; clear property list of interned symbol
       (setf (symbol-plist symbol) nil)
       (set symbol node-counter)
@@ -493,7 +494,7 @@
           using (hash-value value)
           collect (let* ((k key)
                          (v value)
-                         (new-node (make-node k v)))
+                         (new-node (make-node-with-properties k v)))
                         (set-value new-node v)
                         new-node
                     )
@@ -519,9 +520,14 @@
 
   ;(symbol-plist (nth 0 exp-node-list)) ;-> Works. Has :gap-length and :frequency
   ;(get-value (nth 0 exp-node-list)) ;-> Works! gets 738597 or whatever it is for 2
-  (nth 0 exp-node-list) ;-> "n0" or n0 depending on the ouptut
+  ;(nth 0 exp-node-list) ;-> "n0" or n0 depending on the ouptut
   
 #+END_SRC
+
+#+RESULTS:
+#+begin_src elisp
+(:gap-length 2 :frequency 738597)
+#+end_src
 
 ---> Here is the actual Function make-node-list-from-table
 #+BEGIN_SRC elisp :results silent
@@ -532,7 +538,7 @@
           using (hash-value value)
           collect (let* ((k key)
                          (v value)
-                         (new-node-with-properties (make-node k v)))
+                         (new-node (make-node-with-properties k v)))
                     (set-value new-node v)
                     new-node
                     )
@@ -606,8 +612,7 @@ NOTES FROM the Textbook:
   ;; Return T (Q's first and only element?)
 
   (defun sym-greater-than (n1 n2)
-    (and (symbolp n1) (symbolp n2)
-      (< (get-value n1) (get-value n2))))
+    (< (symbol-value n1) (symbol-value n2)))
 
   (defun make-huffman-tree (lst-of-nodes) 
     (let* ((Q lst-of-nodes)
@@ -626,7 +631,7 @@ NOTES FROM the Textbook:
         (set-value T
                    (+ (get-value TL)
                       (get-value TR)))
-        (link-parent-and-children T TL TR)
+        (link-children-and-parent T TL TR)
         (setq Q (cons T Q))
         ;;(setq sum (+ 1 sum)) ;; count how many iterations we get through..
         )
@@ -637,10 +642,12 @@ NOTES FROM the Textbook:
 #+BEGIN_SRC elisp
   ;; we will redo the list-of-nodes (which restarts the node-counter.
   (setq list-of-nodes (make-node-list-from-table f-table))
-  (setq huffman-tree (make-huffman-tree list-of-nodes))
+;  (setq huffman-tree (make-huffman-tree list-of-nodes))
+  (mapcar 'symbol-value list-of-nodes)
 #+END_SRC
 #+RESULTS:
-: n206
+| 738597 | 738717 | 1297540 | 566151 | 503524 | 729808 | 920661 | 667734 | 354267 | 307230 | 129043 | 453215 | 371677 | 211203 | 229177 | 398713 | 123123 | 206722 | 64866 | 159956 | 111546 | 38800 | 93693 | 94682 | 17255 | 52183 | 16763 | 64157 | 55305 | 27985 | 54931 | 32224 | 17374 | 12368 | 3411 | 30960 | 17475 | 13758 | 7253 | 4791 | 3544 | 711 | 1923 | 8540 | 7056 | 9818 | 1125 | 6760 | 3454 | 1831 | 2259 | 933 | 2058 | 433 | 301 | 1168 | 2374 | 941 | 533 | 948 | 67 | 1634 | 287 | 210 | 183 | 43 | 211 | 439 | 46 | 100 | 318 | 128 | 140 | 52 | 90 | 123 | 94 | 10 | 57 | 20 | 4 | 18 | 27 | 5 | 25 | 11 | 4 | 27 | 12 | 6 | 1 | 19 | 10 | 1 | 4 | 9 | 2 | 3 | 1 | 3 | 1 | 1 | 3 | 1 |
+n206
 n206 
 (symbol-value n206) 
 (symbol-value huffman-tree) 9999998
