@@ -724,6 +724,22 @@ n206
    |     |    etc. |
  
 *** TODO total number of bits (huffman encoding)
+   : I correctly calculated the total number of bits encoded with the Huffman
+   : encoding.
+
+   #+BEGIN_SRC elisp
+   ; v is the average number of bits per symbol in huffman
+   ; 83,484,449 is the number of symbols in the prime list
+
+   ;(setq huffman-tree-percentage (/ huffman-tree-total-number-of-bits huffman-tree-number-of-symbols))
+
+   (setq encoded-huffman-bits 44000000.0)
+   (setq huffman-percentage (/ encoded-huffman-bits 83484449.0))
+   #+END_SRC
+
+   #+RESULTS:
+   : 0.5270442642557298
+
 *** total number of bits (fixed key encoding)
    : I correctly calculated the total number of bits encoded with the fixed 
    : encoding. 
@@ -817,12 +833,51 @@ n206
 *** TODO Compression Ratio (fixed to huffman)
    : I correctly calculated the compression ratio from this fixed encoding.
 
+   The compression ratio of an encoding is the percentage ((f−v)/f)⋅100, where f is
+   the number of bits per symbol of the smallest fixed-length encoding, and v is
+   the average number of bits per symbol with the variable-length (e.g. Huffman)
+   encoding.
+   
+   #+BEGIN_SRC elisp :results silent
+   ;; f = number of bits per symbol of fixed length encoding
+   ;; v = average number of bits per symbol for huffman encoding
+   (defun compression-ratio (f v)
+      (* (/ (- f v) f) 100))
+   #+END_SRC
+
+   #+BEGIN_SRC elisp
+   ; fixed key encoding = 7 bits per key
+   ; huffman encoding = see 'total number of bits (huffman encoding)'
+   (compression-ratio 7 huffman-percentage)
+   #+END_SRC
+
+   #+RESULTS:
+   : 92.47079622491813
+   
 *** TODO Compression Ratio (binary to huffman)
    : I correctly calculated the compression ratio from the binary size.
+
+   #+BEGIN_SRC elisp
+   ; binary encoding of primes = 32 bits per prime
+   ; average huffman encoding = 'total number of bits (huffman encoding)'
+   (compression-ratio 32 huffman-percentage)
+   #+END_SRC
+
+   #+RESULTS:
+   : 98.35298667420085
 
 *** TODO Compression Ratio (ASCII to huffman)
    : I correctly calculated the compression ratio from the ASCII size (just
    : the primes, nothing else).
+
+   #+BEGIN_SRC elisp
+   ; fixed key encoding = 8 bits per character * 83,484,449 characters / 10,000,000 primes
+   ; huffman encoding = 'total number of bits (huffman encoding)'
+   (compression-ratio (/ (* 8 83484449) 10000000) huffman-percentage)
+   #+END_SRC
+
+   #+RESULTS:
+   : 99.201448084461
 
 ** Study and Extend Some Sample Code
 ** Connections
