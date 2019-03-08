@@ -525,7 +525,6 @@
 #+RESULTS:
 : 44712373
 
-
 *** Encode-First-Ten-Million-Primes Function
 
     Encapsulate steps #1-5 in a function.
@@ -559,7 +558,6 @@
 44712373
 
 That's 44712373 bits in the huffman-encoding of the first ten million primes.
-
 
 ** Calculate Compression Ratios (and sizes)
 *** number of keys in the hashtable of gap sizes
@@ -614,7 +612,7 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
    |  30 | 0010000 |
    |     |    etc. |
  
-*** TODO total number of bits (huffman encoding)
+*** total number of bits (huffman encoding)
    : I correctly calculated the total number of bits encoded with the Huffman
    : encoding.
 
@@ -719,7 +717,7 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
 
    Just the primes = 667,875,592 bits (with no (CR) or (LF) characters)
 
-*** TODO Compression Ratio (fixed to huffman)
+*** Compression Ratio (fixed to huffman)
    : I correctly calculated the compression ratio from this fixed encoding.
 
    The compression ratio of an encoding is the percentage ((f−v)/f)⋅100, where f is
@@ -735,30 +733,32 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
    #+END_SRC
 
    #+BEGIN_SRC elisp
-   (compression-ratio (/ (* 7.0 9999998.0) 83484449.0)  huffman-percentage)
+     ; total size / number of characters. this is encoded as gaps instead of the
+     ; prime numbers, that way we can use 7 bits instead of a fixed number of bits
+     ; that fits the largest prime in it.
+     (compression-ratio (/ (* 7.0 9999998.0) 83484449.0)  huffman-percentage)
    #+END_SRC
 
    #+RESULTS:
    : 36.12516865360516
-   
-   #+BEGIN_SRC elisp
-   (/ (* 7.0 9999998.0) 83484449.0)
-   #+END_SRC
 
-   #+RESULTS:
-   : 0.8384793436200315
+   36%
 
-*** TODO Compression Ratio (binary to huffman)
+*** Compression Ratio (binary to huffman)
    : I correctly calculated the compression ratio from the binary size.
 
    #+BEGIN_SRC elisp
+   ; total size in bits = 32 bits per prime number * number of prime numbers
+   ; f = total size / number of characters
    (compression-ratio (/ (* 32.0 10000000.0) 83484449.0) huffman-percentage)
    #+END_SRC
 
    #+RESULTS:
    : 86.0273834375
 
-*** TODO Compression Ratio (ASCII to huffman)
+   86%
+
+*** Compression Ratio (ASCII to huffman)
    : I correctly calculated the compression ratio from the ASCII size (just
    : the primes, nothing else).
 
@@ -769,6 +769,8 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
 
    #+RESULTS:
    : 94.02141572742848
+
+   94%
 
 ** Study and Extend Some Sample Code
 ** Connections
@@ -829,17 +831,17 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
     takes no parameters.
   - [X] I correctly calculated the number of keys in the hashtable of gap sizes.
   - [X] I correctly calculated the number of bits per key with a fixed encoding.
-  - [ ] I correctly calculated the total number of bits encoded with the Huffman
+  - [X] I correctly calculated the total number of bits encoded with the Huffman
     encoding.
   - [X] I correctly calculated the total number of bits encoded with the fixed
     encoding.
-  - [ ] I correctly calculated the compression ratio from this fixed encoding.
+  - [X] I correctly calculated the compression ratio from this fixed encoding.
   - [X] I correctly calculated the size of the first ten million primes encoded
     as 32-bit integer binary data.
-  - [ ] I correctly calculated the compression ratio from the binary size.
+  - [X] I correctly calculated the compression ratio from the binary size.
   - [X] I correctly calculated the size of the first ten million primes encoded
     as ASCII data.
-  - [ ] I correctly calculated the compression ratio from the ASCII size (just
+  - [X] I correctly calculated the compression ratio from the ASCII size (just
     the primes, nothing else).
 
 #+BEGIN_SRC elisp
