@@ -181,10 +181,10 @@
       symbol))
 
   (defun get-value (node)
-    (and (symbolp node) (symbol-value node)))
+    (and (symbolp node) (get node :frequency)))
 
   (defun set-value (node new-value)
-    (and (symbolp node) (set node new-value)))
+    (and (symbolp node) (put node :frequency new-value)))
 
   (defun get-parent (node)
     (and (symbolp node) (get node :parent)))
@@ -308,7 +308,7 @@
       (setf (symbol-plist symbol) nil)
       (set symbol frequency)
       ;; set the gap-length (of the node) in the node's plist
-      (put symbol :gap length)
+      (put symbol :gap-length length)
       ;; set the frequency (of the node) in the node's plist
       (put symbol :frequency frequency)
       ;; set an empty code in the plist
@@ -387,8 +387,8 @@
               (get node :code))))
 
   (defun sym-greater-than (n1 n2)
-    (and (integerp (get n1 :frequency)) (integerp (get n2 :frequency))
-    (> (get n1 :frequency) (get n2 :frequency))))
+    (and (integerp (get-value n1)) (integerp (get-value n2))
+    (< (get-value n1) (get-value n2))))
 
   (defun make-huffman-tree (lst-of-nodes) 
     (let* ((Q lst-of-nodes)
@@ -432,7 +432,6 @@
     (loop for sym in list-of-nodes
           collect sym))
   (setq huffman-tree (make-huffman-tree list-of-nodes))
-  (symbol-value 'n206)
 #+END_SRC
 #+RESULTS:
 : n206
