@@ -334,7 +334,7 @@
 
 ---> Here is the actual Function make-node-list-from-table
 #+BEGIN_SRC elisp :results silent
-  (defun make-node-list-from-table-old (ft)
+  (defun make-node-list-from-table (ft)
     (setq node-counter 0)
     (loop for key being the hash-keys of ft 
           using (hash-value value)
@@ -349,7 +349,7 @@
          (put symbol :code "")
          symbol))
 
-  (defun make-node-list-from-table (ft)
+  (defun make-node-list-from-table-maphash (ft)
     (let ((node-list nil))
       (maphash (lambda (key val) (push (new-make-node key val) node-list))
                ft)
