@@ -144,25 +144,6 @@
   2. Ten million primes aren\rsquo{}t enough to have /every/ even number represented;
      for example, 200, 206, 208, 212, 214, 216 and 218 do not appear even once.
 
-* TODO Calculate Size of File
-  Imagine evaluating the following two code blocks:
-#+BEGIN_SRC elisp :results silent
-  (require 'first-ten-million-primes)
-
-  (defun create-ascii-file-of-first-ten-million-primes ()
-    (with-temp-buffer
-      (mapc (lambda (n) (insert (format "%d\n" n))) first-ten-million-primes)
-      (write-region nil 0 "first-ten-million-primes.txt")))
-#+END_SRC
-
-#+BEGIN_SRC elisp :results silent
-  (create-ascii-file-of-first-ten-million-primes)
-#+END_SRC
-
-  Strictly speaking, it is not necessary to create this file in order to
-  calculate its size. How? What would its size be? (Knowing this size is useful
-  for compression ratio comparison.)
-
 * TODO Study and Extend Some Sample Code
   As you are required to build an elisp-structured Huffman tree that can
   compress the list of primes, use the following code block as a guide and a
@@ -190,12 +171,6 @@
                    gap (- curr prev)
                    prev curr)
           collect gap))
-
-  (defun restore-primes (list-of-gaps)
-    "Given the list of gaps starting at the gap between 3 and 5
-       return a list of the first ten million primes."
-    (cons 2 (cons 3 (loop for gap in list-of-gaps with prime = 3
-                          collect (incf prime gap)))))
 
   (setq node-counter 0)
 
@@ -378,7 +353,7 @@
         (pop Q)
         (setq TR (car Q))
         (pop Q)
-        (setq T (make-node)) ;; could use intern.. ??
+        (setq T (make-node))
         (set-value T
                    (+ (get-value TL)
                       (get-value TR)))
@@ -774,38 +749,41 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
 
 ** Connections
 
-   I was first exposed to Huffman Codes in CS235.
-   I thought that it was very cool. I'll probably go 
-   review my notes and code there to help me remember
-   how they work.
+   Most of us were first exposed to Huffman trees in CS235 where we had 
+   the chance to learn about this algorithm and how to build this data 
+   structure. At the time, most of us were still very uncomfortable with 
+   Huffman trees and how to implement them. As we did this project, we 
+   gained a much deeper understanding of the algorithm and feel much more
+   comfortable being able to implement this algorithm into our code for 
+   any real world problem we may come across in the future.
 
 ** Contributors
    Everyone in the class!
 
 * TODO What Is True?
-   This is a tool that allows you to assess yourself on how you did
+   This is a tool that allows us to assess ourselves on how we did
    with this assignment. Check a box (using , ,) if warranted.
 
-   What is true of my experience in general?
+   What is true of our experience in general?
 #+name: assertions-in-general
-  - [X] I had fun.
-  - [X] I collaborated with one or more classmates.
-  - [X] I learned something new.
-  - [X] I achieved something meaningful, or something I can build upon at a
+  - [X] We had fun.
+  - [X] We collaborated with one or more classmates.
+  - [X] We learned something new.
+  - [X] We achieved something meaningful, or something we can build upon at a
     later time.
 
-   What is true of my report on what I learned?
+   What is true of my report on what we learned?
 #+name: assertions-about-report
-  - [ ] I wrote a sufficient number of well-written sentences.
-  - [ ] I reported what I thought about while doing the problems.
-  - [ ] I reported on any connections I found between these problems and
-    something I already know.
-  - [ ] I reported who were and what contribution each of my collaborators made.
-  - [ ] I reported on *three different* compression ratios (see assertions about
+  - [ ] We wrote a sufficient number of well-written sentences.
+  - [ ] We reported what we thought about while doing the problems.
+  - [ ] We reported on any connections we found between these problems and
+    something we already know.
+  - [ ] We reported who were and what contribution each of my collaborators made.
+  - [ ] We reported on *three different* compression ratios (see assertions about
     answers).
 
    What is true of the \ldquo{}mechanical infelicities\rdquo (misspelled words, grammatical
-   errors, punctuation errors) in my report of what I learned?
+   errors, punctuation errors) in our report of what we learned?
 #+name: assertions-about-MIs
   - [ ] There are fewer than four.
   - [ ] There are fewer than three.
@@ -813,34 +791,34 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
   - [ ] There are none.
 
 #+name: assertions-about-answers
-  - [X] I wrote an elisp function to make-frequency-table that takes a
+  - [X] We wrote an elisp function to make-frequency-table that takes a
     list-of-gaps and populates the data structure created by
     =(make-hash-table)=.
-  - [X] I wrote an elisp function to make-node-list-from-table that takes the
+  - [X] We wrote an elisp function to make-node-list-from-table that takes the
     table-of-frequencies and returns a list of nodes.
-  - [X] I wrote an elisp function to make-huffman-tree that takes the
+  - [X] We wrote an elisp function to make-huffman-tree that takes the
     list-of-nodes and returns a Huffman tree.
-  - [X] I wrote an elisp function to get-a-gap-code-table that takes a Huffman
+  - [X] We wrote an elisp function to get-a-gap-code-table that takes a Huffman
     tree (or a list-of-nodes) and returns a code-list as a list of (gap . code)
     cons cells.
-  - [X] I wrote an elisp function to encode the data given the list-of-gaps and
+  - [X] We wrote an elisp function to encode the data given the list-of-gaps and
     the code-list.
-  - [X] I wrote an elisp function to encapsulate the above-mentioned elisp
+  - [X] We wrote an elisp function to encapsulate the above-mentioned elisp
     functions (in order) in one encode-first-ten-million-primes function that
     takes no parameters.
-  - [X] I correctly calculated the number of keys in the hashtable of gap sizes.
-  - [X] I correctly calculated the number of bits per key with a fixed encoding.
-  - [X] I correctly calculated the total number of bits encoded with the Huffman
+  - [X] We correctly calculated the number of keys in the hashtable of gap sizes.
+  - [X] We correctly calculated the number of bits per key with a fixed encoding.
+  - [X] We correctly calculated the total number of bits encoded with the Huffman
     encoding.
-  - [X] I correctly calculated the total number of bits encoded with the fixed
+  - [X] We correctly calculated the total number of bits encoded with the fixed
     encoding.
-  - [X] I correctly calculated the compression ratio from this fixed encoding.
-  - [X] I correctly calculated the size of the first ten million primes encoded
+  - [X] We correctly calculated the compression ratio from this fixed encoding.
+  - [X] We correctly calculated the size of the first ten million primes encoded
     as 32-bit integer binary data.
-  - [X] I correctly calculated the compression ratio from the binary size.
-  - [X] I correctly calculated the size of the first ten million primes encoded
+  - [X] We correctly calculated the compression ratio from the binary size.
+  - [X] We correctly calculated the size of the first ten million primes encoded
     as ASCII data.
-  - [X] I correctly calculated the compression ratio from the ASCII size (just
+  - [X] We correctly calculated the compression ratio from the ASCII size (just
     the primes, nothing else).
 
 #+BEGIN_SRC elisp
