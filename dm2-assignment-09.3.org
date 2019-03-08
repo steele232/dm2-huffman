@@ -731,8 +731,6 @@ n206
    ; v is the average number of bits per symbol in huffman
    ; 83,484,449 is the number of symbols in the prime list
 
-   ;(setq huffman-tree-percentage (/ huffman-tree-total-number-of-bits huffman-tree-number-of-symbols))
-
    (setq encoded-huffman-bits 44712373.0)
    (setq huffman-percentage (/ encoded-huffman-bits 83484449.0))
    #+END_SRC
@@ -846,12 +844,19 @@ n206
    #+END_SRC
 
    #+BEGIN_SRC elisp
-   (compression-ratio (/ (* 7.0 10000000.0) 69999993.0) huffman-percentage)
+   (compression-ratio (/ (* 7.0 9999998.0) 83484449.0)  huffman-percentage)
    #+END_SRC
 
    #+RESULTS:
-   : 46.44227869460731
+   : 36.12516865360516
    
+   #+BEGIN_SRC elisp
+   (/ (* 7.0 9999998.0) 83484449.0)
+   #+END_SRC
+
+   #+RESULTS:
+   : 0.8384793436200315
+
 *** TODO Compression Ratio (binary to huffman)
    : I correctly calculated the compression ratio from the binary size.
 
@@ -867,6 +872,7 @@ n206
    : the primes, nothing else).
 
    #+BEGIN_SRC elisp
+   ; this is the total size in bits divided by the number of characters
    (compression-ratio (/ 747875600.0 83484449.0) huffman-percentage)
    #+END_SRC
 
