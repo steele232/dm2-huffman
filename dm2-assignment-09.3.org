@@ -364,6 +364,9 @@
         number-of-nodes (length list-of-nodes))
 #+END_SRC
 
+#+RESULTS:
+: 104
+
 *** Make-Huffman-Tree
 
 --> Psuedo Code
