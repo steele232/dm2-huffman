@@ -805,7 +805,12 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
    any real world problem we may come across in the future.
 
 ** Contributors
-   Everyone in the class!
+   Everybody in the class participated through discord and in class. We used
+   GitHub and Google Sheets to track the contributions made by each student.
+   Some groups of students worked on the same commit. These cases are specified
+   in the spreadsheet and in pull requests.
+   The spreadsheet can be viewed here: 
+https://docs.google.com/spreadsheets/d/1gE7EWgS4wIwk83Ihqh6C-AOfHSLGAsq9a2HcooQcQw4/edit?usp=sharing
 
 * TODO What Is True?
    This is a tool that allows us to assess ourselves on how we did
