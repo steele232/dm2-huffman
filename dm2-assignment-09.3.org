@@ -624,12 +624,12 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
 
    ;(setq huffman-tree-percentage (/ huffman-tree-total-number-of-bits huffman-tree-number-of-symbols))
 
-   (setq encoded-huffman-bits 44000000.0)
+   (setq encoded-huffman-bits 44712373.0)
    (setq huffman-percentage (/ encoded-huffman-bits 83484449.0))
    #+END_SRC
 
    #+RESULTS:
-   : 0.5270442642557298
+   : 0.5355772666116536
 
 *** total number of bits (fixed key encoding)
    : I correctly calculated the total number of bits encoded with the fixed 
@@ -737,38 +737,32 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
    #+END_SRC
 
    #+BEGIN_SRC elisp
-   ; fixed key encoding = 7 bits per key
-   ; huffman encoding = see 'total number of bits (huffman encoding)'
-   (compression-ratio 7 huffman-percentage)
+   (compression-ratio (/ (* 7.0 10000000.0) 69999993.0) huffman-percentage)
    #+END_SRC
 
    #+RESULTS:
-   : 92.47079622491813
+   : 46.44227869460731
    
 *** TODO Compression Ratio (binary to huffman)
    : I correctly calculated the compression ratio from the binary size.
 
    #+BEGIN_SRC elisp
-   ; binary encoding of primes = 32 bits per prime
-   ; average huffman encoding = 'total number of bits (huffman encoding)'
-   (compression-ratio 32 huffman-percentage)
+   (compression-ratio (/ (* 32.0 10000000.0) 83484449.0) huffman-percentage)
    #+END_SRC
 
    #+RESULTS:
-   : 98.35298667420085
+   : 86.0273834375
 
 *** TODO Compression Ratio (ASCII to huffman)
    : I correctly calculated the compression ratio from the ASCII size (just
    : the primes, nothing else).
 
    #+BEGIN_SRC elisp
-   ; fixed key encoding = 8 bits per character * 83,484,449 characters / 10,000,000 primes
-   ; huffman encoding = 'total number of bits (huffman encoding)'
-   (compression-ratio (/ (* 8 83484449) 10000000) huffman-percentage)
+   (compression-ratio (/ 747875600.0 83484449.0) huffman-percentage)
    #+END_SRC
 
    #+RESULTS:
-   : 99.201448084461
+   : 94.02141572742848
 
 ** Study and Extend Some Sample Code
 ** Connections
