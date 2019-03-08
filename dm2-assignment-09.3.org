@@ -287,7 +287,6 @@
 #+END_SRC
 
 --> Let's make the list of nodes! 
-(We do it in a let here first for experimentation.)
 #+BEGIN_SRC elisp :results silent
 
   ;; Set node-counter to 0 so that the nodes 
@@ -317,20 +316,6 @@
       symbol))
 
 #+END_SRC
-
--> play with exp-node-list to see if the plist got set right.
-#+BEGIN_SRC elisp :results code
-
-  ;(symbol-plist (nth 0 exp-node-list)) ;-> Works. Has :gap-length and :frequency
-  ;(get-value (nth 0 exp-node-list)) ;-> Works! gets 738597 or whatever it is for 2
-  ;(nth 0 exp-node-list) ;-> "n0" or n0 depending on the ouptut
-  
-#+END_SRC
-
-#+RESULTS:
-#+begin_src elisp
-(:gap-length 2 :frequency 738597)
-#+end_src
 
 ---> Here is the actual Function make-node-list-from-table
 #+BEGIN_SRC elisp :results silent
@@ -585,12 +570,12 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
 *** number of keys in the hashtable of gap sizes
    : I correctly calculated the number of keys in the hashtable of gap sizes.
 
-#+BEGIN_SRC elisp :var ft=f-org-table
+#+BEGIN_SRC elisp 
 ; how many different keys we must encode
-(length ft)
+(length  gap-code-table)
 #+END_SRC
 
-#+RESULT:
+#+RESULTS:
 : 104
 
 *** bits per key with fixed encoding
