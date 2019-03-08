@@ -144,25 +144,6 @@
   2. Ten million primes aren\rsquo{}t enough to have /every/ even number represented;
      for example, 200, 206, 208, 212, 214, 216 and 218 do not appear even once.
 
-* TODO Calculate Size of File
-  Imagine evaluating the following two code blocks:
-#+BEGIN_SRC elisp :results silent
-  (require 'first-ten-million-primes)
-
-  (defun create-ascii-file-of-first-ten-million-primes ()
-    (with-temp-buffer
-      (mapc (lambda (n) (insert (format "%d\n" n))) first-ten-million-primes)
-      (write-region nil 0 "first-ten-million-primes.txt")))
-#+END_SRC
-
-#+BEGIN_SRC elisp :results silent
-  (create-ascii-file-of-first-ten-million-primes)
-#+END_SRC
-
-  Strictly speaking, it is not necessary to create this file in order to
-  calculate its size. How? What would its size be? (Knowing this size is useful
-  for compression ratio comparison.)
-
 * TODO Study and Extend Some Sample Code
   As you are required to build an elisp-structured Huffman tree that can
   compress the list of primes, use the following code block as a guide and a
@@ -190,12 +171,6 @@
                    gap (- curr prev)
                    prev curr)
           collect gap))
-
-  (defun restore-primes (list-of-gaps)
-    "Given the list of gaps starting at the gap between 3 and 5
-       return a list of the first ten million primes."
-    (cons 2 (cons 3 (loop for gap in list-of-gaps with prime = 3
-                          collect (incf prime gap)))))
 
   (setq node-counter 0)
 
@@ -250,21 +225,18 @@
 #+END_SRC
 
 * My Report
-
-
 ** Explore Huffman Trees and Huffman Codes
 *** Make-Frequency-Table
 
 #+BEGIN_SRC elisp
-
   (setq list-of-gaps (list-the-gaps)
         len (length list-of-gaps))
-
 #+END_SRC
 
 #+RESULTS:
 : 9999998
 
+--> Show the last several lines
 #+BEGIN_SRC elisp
    (subseq list-of-gaps 9999988) 
 #+END_SRC
@@ -289,7 +261,7 @@
   (setq f-table (make-frequency-table list-of-gaps))   
 #+END_SRC
 
--> Here it is!
+-> Here is the result!
 #+BEGIN_SRC elisp
   f-table
 #+END_SRC
@@ -297,155 +269,10 @@
 #+RESULTS:
 : #s(hash-table size 145 test eql rehash-size 1.5 rehash-threshold 0.8125 data (2 738597 4 738717 6 1297540 8 566151 14 503524 10 729808 12 920661 18 667734 20 354267 22 307230 34 129043 24 453215 16 371677 26 211203 28 229177 30 398713 32 123123 36 206722 44 64866 42 159956 40 111546 52 38800 48 93693 38 94682 72 17255 50 52183 62 16763 54 64157 60 55305 58 27985 46 54931 56 32224 64 17374 68 12368 86 3411 66 30960 70 17475 78 13758 76 7253 82 4791 96 3544 112 711 100 1923 74 8540 90 7056 84 9818 114 1125 80 6760 88 3454 98 1831 92 2259 106 933 94 2058 118 433 132 301 104 1168 102 2374 110 941 126 533 120 948 148 67 108 1634 122 287 138 210 128 183 154 43 130 211 116 439 146 46 136 100 124 318 134 128 140 140 152 52 142 90 144 123 150 94 180 10 156 57 164 20 210 4 170 18 160 27 182 5 168 25 176 11 172 4 162 27 178 12 198 6 220 1 158 19 174 10 196 1 184 4 166 9 202 2 204 3 222 1 192 3 188 1 190 1 186 3 194 1))
 
--> How to get a value from the hashmap
-#+BEGIN_SRC elisp
-  (gethash 2 f-table 0)
-#+END_SRC
-
-#+RESULTS:
-: 738597
-
--> This is it in a Table. (List of Lists (LoL)).
-#+name: f-table-func
-#+BEGIN_SRC elisp :results silent
-
-  (defun second-elt-zerop (L)
-    (zerop (nth 1 L)))
-
-
-  (defun make-freq-LoL ()
-    (remove-if 'second-elt-zerop
-      (loop for i from 2 upto 250
-            collect (list i (gethash i f-table 0)))))
-
-#+END_SRC
-
-#+name: f-org-table
-#+BEGIN_SRC elisp
-  (setq freq-table (make-freq-LoL))
-#+END_SRC
-
-#+RESULTS: f-org-table
-|   2 |  738597 |
-|   4 |  738717 |
-|   6 | 1297540 |
-|   8 |  566151 |
-|  10 |  729808 |
-|  12 |  920661 |
-|  14 |  503524 |
-|  16 |  371677 |
-|  18 |  667734 |
-|  20 |  354267 |
-|  22 |  307230 |
-|  24 |  453215 |
-|  26 |  211203 |
-|  28 |  229177 |
-|  30 |  398713 |
-|  32 |  123123 |
-|  34 |  129043 |
-|  36 |  206722 |
-|  38 |   94682 |
-|  40 |  111546 |
-|  42 |  159956 |
-|  44 |   64866 |
-|  46 |   54931 |
-|  48 |   93693 |
-|  50 |   52183 |
-|  52 |   38800 |
-|  54 |   64157 |
-|  56 |   32224 |
-|  58 |   27985 |
-|  60 |   55305 |
-|  62 |   16763 |
-|  64 |   17374 |
-|  66 |   30960 |
-|  68 |   12368 |
-|  70 |   17475 |
-|  72 |   17255 |
-|  74 |    8540 |
-|  76 |    7253 |
-|  78 |   13758 |
-|  80 |    6760 |
-|  82 |    4791 |
-|  84 |    9818 |
-|  86 |    3411 |
-|  88 |    3454 |
-|  90 |    7056 |
-|  92 |    2259 |
-|  94 |    2058 |
-|  96 |    3544 |
-|  98 |    1831 |
-| 100 |    1923 |
-| 102 |    2374 |
-| 104 |    1168 |
-| 106 |     933 |
-| 108 |    1634 |
-| 110 |     941 |
-| 112 |     711 |
-| 114 |    1125 |
-| 116 |     439 |
-| 118 |     433 |
-| 120 |     948 |
-| 122 |     287 |
-| 124 |     318 |
-| 126 |     533 |
-| 128 |     183 |
-| 130 |     211 |
-| 132 |     301 |
-| 134 |     128 |
-| 136 |     100 |
-| 138 |     210 |
-| 140 |     140 |
-| 142 |      90 |
-| 144 |     123 |
-| 146 |      46 |
-| 148 |      67 |
-| 150 |      94 |
-| 152 |      52 |
-| 154 |      43 |
-| 156 |      57 |
-| 158 |      19 |
-| 160 |      27 |
-| 162 |      27 |
-| 164 |      20 |
-| 166 |       9 |
-| 168 |      25 |
-| 170 |      18 |
-| 172 |       4 |
-| 174 |      10 |
-| 176 |      11 |
-| 178 |      12 |
-| 180 |      10 |
-| 182 |       5 |
-| 184 |       4 |
-| 186 |       3 |
-| 188 |       1 |
-| 190 |       1 |
-| 192 |       3 |
-| 194 |       1 |
-| 196 |       1 |
-| 198 |       6 |
-| 202 |       2 |
-| 204 |       3 |
-| 210 |       4 |
-| 220 |       1 |
-| 222 |       1 |
-
 *** Make-Node-List-From-Table
 
--> Loop over with just keys
-#+BEGIN_SRC elisp :results silent
-  (loop for k being the hash-key of f-table collect k )
-#+END_SRC
-
--> Sorted version
-#+BEGIN_SRC elisp :results silent
-  (sort 
-    (loop for k being the hash-key of f-table collect k )
-   '<)
-#+END_SRC
-
---> Example of maphash function
+--> Example of maphash function 
+(EXCEPT it Returns NIL has no other collection mechanism)
 #+BEGIN_SRC elisp :results silent
   (maphash (lambda (key val)
             (list "cstring" key val))
@@ -489,32 +316,6 @@
       (incf node-counter)
       symbol))
 
-  ;; Here is a let that we will probably change into
-  ;; a  function soon.
-  (setq exp-node-list (let* ((ft f-table))
-    (loop for key being the hash-keys of ft 
-          using (hash-value value)
-          collect (let* ((k key)
-                         (v value)
-                         (new-node (make-node-with-properties k v)))
-                        (set-value new-node v)
-                        new-node
-                    )
-          )
-    ))
-
-  ;;;; PSEUDOCODE FOR WHAT I DID.
-  ;; loop over all the keys and values..
-  ;; collect -> let.. 
-  ;; let inside loop
-    ;; put let 
-    ;; make a new node
-    ;; ?? set its value to be the frequency (so that it can be easily sorted by it???)
-    ;; set the gap-length (of the node) in the node's plist
-    ;; set the frequency (of the node) in the node's plist
-    ;; return that node to the end of the let.
-
-
 #+END_SRC
 
 -> play with exp-node-list to see if the plist got set right.
@@ -534,7 +335,6 @@
 ---> Here is the actual Function make-node-list-from-table
 #+BEGIN_SRC elisp :results silent
   (defun make-node-list-from-table (ft)
-    ""
     (setq node-counter 0)
     (loop for key being the hash-keys of ft 
           using (hash-value value)
@@ -551,32 +351,8 @@
 
 *** Make-Huffman-Tree
 
---> Example initialization steps in the Textbook.
-#+BEGIN_SRC elisp
-(setq symbols [A B C D E F]
-      frequencies [0.08 0.10 0.12 0.15 0.20 0.35]
-      syms-freqs-as-list-of-pairs
-        (mapcar* 'cons symbols frequencies)
-      syms-freqs-as-vector-of-vectors
-        (map 'vector (lambda (x y) (vector x y)) symbols frequencies)
-      display (list (list syms-freqs-as-list-of-pairs)
-                    (list syms-freqs-as-vector-of-vectors)))
-
-#+END_SRC
-
-#+RESULTS:
-| ((A . 0.08) (B . 0.1) (C . 0.12) (D . 0.15) (E . 0.2) (F . 0.35)) |
-| [[A 0.08] [B 0.1] [C 0.12] [D 0.15] [E 0.2] [F 0.35]]             |
-
-NOTES FROM the Textbook:
-- Just to re-affirm, higher-frequency nodes (gaps) should be near the top
-  (root) of the tree. 
-
--> A repeated block to make it easy to re=evaluate this ...
+--> Psuedo Code
 #+BEGIN_SRC elisp :results silent
-#+END_SRC
-#+BEGIN_SRC elisp :results silent
-
 
   ;;;; PSEUDOCODE ==> Supplied by Bro Neff in textbook.
   ;; 
@@ -591,20 +367,24 @@ NOTES FROM the Textbook:
   ;;    Insert T into Q.
   ;; return T
 
-  ;;;; PSEUDOCODE ==> In my Words
-  ;; Sort list of nodes by frequency (big in 'front', small in 'back')
-  ;; Treat the list as a queue
-  ;; Go/Loop from the front to the back AND...
-  ;; WHILE Q has MORE THAN 1 (ONE) element, DO
-    ;; SORT again the Q
-    ;; Tree-Left = front
-    ;; delete off front
-    ;; Tree-Right = front
-    ;; delete off front
-    ;; ** CREATE a new Tree T with TL and TR as its left and right subtrees,
-    ;; and weight equal to the sum of TL's weight and TR's weight.
-    ;; Insert T into Q (it will be sorted by next time..)
-  ;; Return T (Q's first and only element?)
+#+END_SRC
+
+--> make-huffman-tree function (with helper functions)
+#+BEGIN_SRC elisp :results silent
+
+  (defun append-code-to-subtree (strCode node)
+    ;; add it to this tree
+    ;; pass it on to the children if they exist..
+    (if (not (eq nil (get node :left))) 
+      (append-code-to-subtree strCode 
+        (get node :left)))
+    (if (not (eq nil (get node :right)))
+      (append-code-to-subtree strCode 
+        (get node :right)))
+    (if (eq nil (get node :code)) (put node :code ""))
+    (put node :code 
+      (concat strCode 
+              (get node :code))))
 
   (defun sym-greater-than (n1 n2)
     (and (integerp (get n1 :frequency)) (integerp (get n2 :frequency))
@@ -623,32 +403,54 @@ NOTES FROM the Textbook:
         (pop Q)
         (setq TR (car Q))
         (pop Q)
-        (setq T (make-node)) ;; now using intern
+        (setq T (make-node))
         (set-value T
                    (+ (get-value TL)
                       (get-value TR)))
         (link-children-and-parent T TL TR)
+        ;; HANDLE tree-leaves (initialize code to "")
+        (if (eq nil (get TL :code)) (put TL :code ""))
+        (if (eq nil (get TR :code)) (put TR :code ""))
+        ;; add "0" to all SUBTREES on the LEFT LEFTs
+        (append-code-to-subtree "0" TL)
+        ;; add "1" to all RIGHTs
+        (append-code-to-subtree "1" TR)
+        ;; determine 
+        
         (setq Q (cons T Q))
         ;;(setq sum (+ 1 sum)) ;; count how many iterations we get through..
         )
 
-      (car Q)))
+      (car Q)
+      ))
 
 #+END_SRC
-#+BEGIN_SRC elisp :results raw
-  ;; we will redo the list-of-nodes (which restarts the node-counter.
+#+BEGIN_SRC elisp
+  ;; we will redo the list-of-nodes (which restarts the node-counter).
   (setq list-of-nodes (make-node-list-from-table f-table))
+  (setq backup-list-of-nodes ;; We 
+    (loop for sym in list-of-nodes
+          collect sym))
   (setq huffman-tree (make-huffman-tree list-of-nodes))
   (symbol-value 'n206)
 #+END_SRC
 #+RESULTS:
-(:left n205 :right n103)
-n206
-n206
-n206 
-(symbol-value n206) 
-(symbol-value huffman-tree) 9999998
-(symbol-plist huffman-tree) (:left n204 :right n205)
+: n206
+
+--> Let's investigate the results...
+#+BEGIN_SRC elisp :results silent
+  (loop for s in backup-list-of-nodes
+        collect (symbol-plist s))
+#+END_SRC
+#+BEGIN_SRC elisp
+  (list (length list-of-nodes)
+        (length backup-list-of-nodes)
+        list-of-nodes
+        backup-list-of-nodes)
+#+END_SRC
+
+#+RESULTS:
+| 18 | 104 | (n0 n1 n192 n193 n6 n194 n195 n196 n2 n197 n198 n199 n200 n201 n202 n203 n204 n205) | (n0 n1 n2 n3 n4 n5 n6 n7 n8 n9 n10 n11 n12 n13 n14 n15 n16 n17 n18 n19 n20 n21 n22 n23 n24 n25 n26 n27 n28 n29 n30 n31 n32 n33 n34 n35 n36 n37 n38 n39 n40 n41 n42 n43 n44 n45 n46 n47 n48 n49 n50 n51 n52 n53 n54 n55 n56 n57 n58 n59 n60 n61 n62 n63 n64 n65 n66 n67 n68 n69 n70 n71 n72 n73 n74 n75 n76 n77 n78 n79 n80 n81 n82 n83 n84 n85 n86 n87 n88 n89 n90 n91 n92 n93 n94 n95 n96 n97 n98 n99 n100 n101 n102 n103) |
 
 *** Get-A-Gap-Code-Table
 
@@ -663,84 +465,373 @@ n206
   ;; Add 0's when you go LEFT, 
   ;; Add 1's when you go RIGHT,
   ;; GENERATE A BIT STRING FOR EVERY LEAF-NODE (not  (AND ADD TO THE LIST)
+  
+#+END_SRC
 
-  (defun get-a-gap-code-table (htree-root)
-    ""
-    nil)
-
-  (let* ((nodes list-of-nodes))
-    (loop for node in nodes
-     collect 
-       (list (get-value node)
-             (symbol-plist node)
-             )))
+#+BEGIN_SRC elisp :results silent
+  
+  (defun get-a-gap-code-table ()
+    (let* ((nodes backup-list-of-nodes))
+      (loop for node in nodes
+            collect 
+            (cons (get node :gap-length)
+                  (get node :code)
+                  ))))
 
 #+END_SRC
 
 -> This is the usage..
 #+BEGIN_SRC elisp
-  (setq gap-code-table (get-a-gap-code-table huffman-tree))
+  (setq gap-code-table (get-a-gap-code-table))
 #+END_SRC
 
 #+RESULTS:
+: ((2 . 1100) (4 . 1101) (6 . 100) (8 . 0101) (14 . 0100) (10 . 1011) (12 . 000) (18 . 0111) (20 . 10101) (22 . 01101) (34 . 011000) (24 . 0010) (16 . 11100) (26 . 111110) (28 . 111111) (30 . 11101) (32 . 001110) (36 . 111101) (44 . 0011111) (42 . 101000) (40 . 001100) (52 . 01100111) (48 . 1010010) (38 . 1010011) (72 . 011001011) (50 . 11110001) (62 . 011001010) (54 . 0011110) (60 . 11110011) (58 . 00110101) (46 . 11110010) (56 . 01100100) (64 . 011001100) (68 . 1111000010) (86 . 00110100100) (66 . 00110110) (70 . 011001101) (78 . 001101000) (76 . 0011011101) (82 . 11110000001) (96 . 00110111000) (112 . 11110000110100) (100 . 001101111001) (74 . 0011011111) (90 . 0011010011) (84 . 1111000001) (114 . 0011011110111) (80 . 11110000111) (88 . 00110100101) (98 . 001101110011) (92 . 111100000000) (106 . 0011011100101) (94 . 001101111010) (118 . 111100001101011) (132 . 111100001100100) (104 . 1111000011000) (102 . 111100000001) (110 . 0011011110000) (126 . 00110111101100) (120 . 0011011110001) (148 . 00110111101101001) (108 . 1111000011011) (122 . 001101111011011) (138 . 1111000011010101) (128 . 1111000011001110) (154 . 111100001100101110) (130 . 001101110010010) (116 . 00110111001000) (146 . 111100001101010000) (136 . 11110000110101001) (124 . 111100001100110) (134 . 0011011110110101) (140 . 1111000011001010) (152 . 00110111001001100) (142 . 11110000110011110) (144 . 0011011100100111) (150 . 11110000110011111) (180 . 11110000110010110011) (156 . 00110111101101000) (164 . 1111000011001011011) (210 . 001101110010011011111) (170 . 1111000011001011000) (160 . 1111000011010100011) (182 . 111100001100101111010) (168 . 1111000011010100010) (176 . 11110000110010111110) (172 . 001101110010011011100) (162 . 001101110010011010) (178 . 11110000110010111111) (198 . 00110111001001101100) (220 . 00110111001001101101100) (158 . 1111000011001011010) (174 . 11110000110010111100) (196 . 00110111001001101101101) (184 . 001101110010011011101) (166 . 11110000110010110010) (202 . 0011011100100110110111) (204 . 1111000011001011110110) (222 . 00110111001001101111010) (192 . 1111000011001011110111) (188 . 00110111001001101111011) (190 . 00110111001001101111000) (186 . 001101110010011011010) (194 . 00110111001001101111001))
 
-
---> Recursion Practice
-#+BEGIN_SRC elisp
-  (defun rec-ess 
+-> Let's investigate the results...
+#+BEGIN_SRC elisp :results silent
+  (subseq gap-code-table 0 4)
 #+END_SRC
 
--->maphash practice
-#+BEGIN_SRC elisp
-  (
+*** Encode the Data (the first-ten-million-primes (List-of-Gaps))
+
+
+--> Helper func. Get it working.
+#+BEGIN_SRC elisp :results silent
+  (defun get-code-of-gap (gapNum)
+    (cdr (assoc gapNum gap-code-table))
+  )
 #+END_SRC
 
+--> Verify the function
+#+BEGIN_SRC elisp
+  (list (get-code-of-gap 6)
+        (get-code-of-gap 12)
+        (get-code-of-gap 2)
+        (get-code-of-gap 4))
+#+END_SRC
 
-** Calculate Size of File
+#+RESULTS:
+| 100 | 000 | 1100 | 1101 |
+
+#+BEGIN_SRC elisp :results silent
+  
+  ;;;; PSEUDOCODE
+  ;; Start an empty string
+  ;; Loop through the list of gaps
+    ;; for the given gap
+    ;; find the code associated with that gap.
+    ;; append that code to the accumulated encoded string.
+
+#+END_SRC
+
+--> ENCODING FUNCTION (Mapping Version)
+---> Some serious help from Bro Neff here. 
+#+BEGIN_SRC elisp :results silent
+  (defun get-encoded-primes () 
+    (mapconcat
+      ;; FUNCTION
+      (lambda (gap-size) (get-code-of-gap gap-size))
+      ;; SEQUENCE
+      list-of-gaps
+      ;; SEPARATOR
+      ""
+      )
+    )
+#+END_SRC
+
+#+BEGIN_SRC elisp
+  (setq encoded-primes (get-encoded-primes)
+        len-encoded (length encoded-primes))
+#+END_SRC
+
+#+RESULTS:
+: 44712373
+
+*** Encode-First-Ten-Million-Primes Function
+
+    Encapsulate steps #1-5 in a function.
+
+    This requires running pretty much all the source blocks previous to this.
+
+#+BEGIN_SRC elisp :results raw
+
+  (let ((x 5))
+
+    ;; we will redo the list-of-nodes (which restarts the node-counter).
+    (setq list-of-nodes (make-node-list-from-table f-table))
+    ;; We need a backup list so that we don't kill it as we go through
+    ;; the huffman-tree-building algorithm.
+    (setq backup-list-of-nodes
+          (loop for sym in list-of-nodes
+                collect sym))
+    (setq huffman-tree (make-huffman-tree list-of-nodes))
+    (setq gap-code-table (get-a-gap-code-table))
+
+    (setq encoded-primes (get-encoded-primes)
+          len-encoded (length encoded-primes))
+    ;;encoded-primes ;; return that.
+    len-encoded
+  )
 
 
-** Study and Extend Some Sample Code
+#+END_SRC
 
+#+RESULTS:
+44712373
+
+That's 44712373 bits in the huffman-encoding of the first ten million primes.
+
+** Calculate Compression Ratios (and sizes)
+*** number of keys in the hashtable of gap sizes
+   : I correctly calculated the number of keys in the hashtable of gap sizes.
+
+#+BEGIN_SRC elisp :var ft=f-org-table
+; how many different keys we must encode
+(length ft)
+#+END_SRC
+
+#+RESULT:
+: 104
+
+*** bits per key with fixed encoding
+   : I correctly calculated the number of bits per key with a fixed encoding. 
+   There are 104 different keys in our hashtable so we need ceiling(log_{2}104)
+   bits to hold them all. There will be some unused bits afterwards, but we will
+   be able to represent every key in our table with a unique bitcode.
+
+   | # bits | max # keys |
+   |--------+------------|
+   |      1 |          2 |
+   |      2 |          4 |
+   |      3 |          8 |
+   |      4 |         16 |
+   |      5 |         32 |
+   |      6 |         64 |
+   |      7 |        128 | <-- This is greater than 104 so we have our number!
+
+   So we will need *7* bits to represent every key code in our hash table of
+   spaces between prime numbers.
+
+   For example:
+
+   | key | bitcode |
+   |-----+---------|
+   |   2 | 0000001 |
+   |   4 | 0000010 |
+   |   6 | 0000011 |
+   |   8 | 0000100 |
+   |  14 | 0000101 |
+   |  10 | 0000110 |
+   |  12 | 0000111 |
+   |  18 | 0001000 |
+   |  20 | 0001001 |
+   |  22 | 0001010 |
+   |  34 | 0001011 |
+   |  24 | 0001100 |
+   |  16 | 0001101 |
+   |  26 | 0001110 |
+   |  28 | 0001111 |
+   |  30 | 0010000 |
+   |     |    etc. |
+ 
+*** total number of bits (huffman encoding)
+   : I correctly calculated the total number of bits encoded with the Huffman
+   : encoding.
+
+   #+BEGIN_SRC elisp
+   ; v is the average number of bits per symbol in huffman
+   ; 83,484,449 is the number of symbols in the prime list
+
+   (setq encoded-huffman-bits 44712373.0)
+   (setq huffman-percentage (/ encoded-huffman-bits 83484449.0))
+   #+END_SRC
+
+   #+RESULTS:
+   : 0.5355772666116536
+
+*** total number of bits (fixed key encoding)
+   : I correctly calculated the total number of bits encoded with the fixed 
+   : encoding. 
+  
+   So that is our encoding scheme, now how do we encode all 10 million primes?
+   Well we just need to write down the spaces between the primes, so we would
+   need 9,999,999 consecutive sections of 7 bits; where each 7 bit segment
+   encodes the jump from the previous prime number to the next prime number. We
+   only need one less than the number of numbers because the last prime number
+   does not need a 7-bit jump to the 10,000,001^st prime number.
+
+   7 x 9,999,999 = *69,999,993* bits
+
+*** total number of bits (32-Binary encoding)
+   : I correctly calculated the size of the first ten million primes encoded
+   : as 32-bit integer binary data.
+
+   Each prime number is a 32-bit integer (binary), and there are 10 million
+   primes, that means there are 32 x 10 million = *320,000,000* bits used.
+
+*** total number of bits (ASCII encoding)
+   : I correctly calculated the size of the first ten million primes encoded
+   : as ASCII data.
+   
+   Extended ASCII (which most OS use now) uses 8 bits per character, so with 10
+   million primes, each with at least one character, that's already 80 million
+   bits. In addition to that (in windows) there are two whitespace characters
+   (CRLF) at the end of each line, so that's an additional 8 x 10,000,000 x 2 =
+   160,000,000 bits!
+
+   There we already have 240,000,000 bits, and that doesn't even take into
+   account the number of characters required for each prime number. The biggest
+   prime (17,9424,673) uses 9 characters (without commas) and so requires 72
+   bits all to itself!
+
+  #+BEGIN_SRC elisp
+    ;(require 'cl)
+    ;(require 'first-ten-million-primes)
+
+    ; code to calculate the number of bits in the ascii representations of numbers
+    (loop for i from 1 upto (1- (length first-ten-million-primes)) do (setq curr (elt first-ten-million-primes i)) sum (- (loop for char in (split-string (number-to-string curr) "") count char) 2))
+
+    ; floor(log_10 n) + 1 this would simplify my second loop quite a bit: sum (1+
+    ; (floor (log_10 curr)))
+  #+END_SRC
+
+   #+RESULT:
+   : 83,484,449 characters in the list of primes
+
+   #+BEGIN_SRC elisp
+   ; spacemacs adds an extra LF at the end of the file
+   ; multiply by 8 because ASCII characters are each a byte
+
+   ; windows machine
+   ; whitespace characters are x2 because windows uses CRLF
+   ;(* (1+ (+ 83484449 (* 10000000 2))) 8)
+
+   ; unix machine
+   ; whitespace characters are one per prime (LF)
+   (* (1+ (+ 83484449 10000000)) 8)
+
+   ; just the primes
+   (* 83484449 8)
+   #+END_SRC
+
+   #+RESULT-JUST-THE-PRIMES:
+   : 667,875,592
+
+   #+RESULT-IN-UNIX:
+   : 747,875,600
+
+   #+RESULT-IN-WINDOWS:
+   : 827,875,600
+
+   Theoretically, the resulting ASCII encoding should be 827,875,592 bits, but
+   vi and other editors append an extra (LF) character to the end of your file,
+   so 827,875,600 bits.
+
+   Checking in a windows system we find the resulting size of ASCII characters
+   to represent these primes is 827,875,600 bits as a text file in windows,
+   which is exactly what we expected!
+
+   In a Unix style operating system the line ending would be encoded as (LF)
+   only and will result in a smaller file: 747,875,600 bits.
+
+   After discussion in class we will use the Unix encoding (with the extra LF
+   from emacs file creation) *747,875,600* bits.
+
+   Just the primes = 667,875,592 bits (with no (CR) or (LF) characters)
+
+*** Compression Ratio (fixed to huffman)
+   : I correctly calculated the compression ratio from this fixed encoding.
+
+   The compression ratio of an encoding is the percentage ((f−v)/f)⋅100, where f is
+   the number of bits per symbol of the smallest fixed-length encoding, and v is
+   the average number of bits per symbol with the variable-length (e.g. Huffman)
+   encoding.
+   
+   #+BEGIN_SRC elisp :results silent
+   ;; f = number of bits per symbol of fixed length encoding
+   ;; v = average number of bits per symbol for huffman encoding
+   (defun compression-ratio (f v)
+      (* (/ (- f v) f) 100))
+   #+END_SRC
+
+   #+BEGIN_SRC elisp
+     ; total size / number of characters. this is encoded as gaps instead of the
+     ; prime numbers, that way we can use 7 bits instead of a fixed number of bits
+     ; that fits the largest prime in it.
+     (compression-ratio (/ (* 7.0 9999998.0) 83484449.0)  huffman-percentage)
+   #+END_SRC
+
+   #+RESULTS:
+   : 36.12516865360516
+
+   36%
+
+*** Compression Ratio (binary to huffman)
+   : I correctly calculated the compression ratio from the binary size.
+
+   #+BEGIN_SRC elisp
+   ; total size in bits = 32 bits per prime number * number of prime numbers
+   ; f = total size / number of characters
+   (compression-ratio (/ (* 32.0 10000000.0) 83484449.0) huffman-percentage)
+   #+END_SRC
+
+   #+RESULTS:
+   : 86.0273834375
+
+   86%
+
+*** Compression Ratio (ASCII to huffman)
+   : I correctly calculated the compression ratio from the ASCII size (just
+   : the primes, nothing else).
+
+   #+BEGIN_SRC elisp
+   ; this is the total size in bits divided by the number of characters
+   (compression-ratio (/ 747875600.0 83484449.0) huffman-percentage)
+   #+END_SRC
+
+   #+RESULTS:
+   : 94.02141572742848
+
+   94%
 
 ** Connections
 
-   I was first exposed to Huffman Codes in CS235.
-   I thought that it was very cool. I'll probably go 
-   review my notes and code there to help me remember
-   how they work.
+   Most of us were first exposed to Huffman trees in CS235 where we had 
+   the chance to learn about this algorithm and how to build this data 
+   structure. At the time, most of us were still very uncomfortable with 
+   Huffman trees and how to implement them. As we did this project, we 
+   gained a much deeper understanding of the algorithm and feel much more
+   comfortable being able to implement this algorithm into our code for 
+   any real world problem we may come across in the future.
 
 ** Contributors
-
-   - Grayson
-   - Taylor
-   - Luke
-   - Bro Neff
-
+   Everyone in the class!
 
 * TODO What Is True?
-   This is a tool that allows you to assess yourself on how you did
+   This is a tool that allows us to assess ourselves on how we did
    with this assignment. Check a box (using , ,) if warranted.
 
-   What is true of my experience in general?
+   What is true of our experience in general?
 #+name: assertions-in-general
-  - [X] I had fun.
-  - [X] I collaborated with one or more classmates.
-  - [X] I learned something new.
-  - [X] I achieved something meaningful, or something I can build upon at a
+  - [X] We had fun.
+  - [X] We collaborated with one or more classmates.
+  - [X] We learned something new.
+  - [X] We achieved something meaningful, or something we can build upon at a
     later time.
 
-   What is true of my report on what I learned?
+   What is true of my report on what we learned?
 #+name: assertions-about-report
-  - [ ] I wrote a sufficient number of well-written sentences.
-  - [ ] I reported what I thought about while doing the problems.
-  - [ ] I reported on any connections I found between these problems and
-    something I already know.
-  - [ ] I reported who were and what contribution each of my collaborators made.
-  - [ ] I reported on *three different* compression ratios (see assertions about
+  - [ ] We wrote a sufficient number of well-written sentences.
+  - [ ] We reported what we thought about while doing the problems.
+  - [ ] We reported on any connections we found between these problems and
+    something we already know.
+  - [ ] We reported who were and what contribution each of my collaborators made.
+  - [ ] We reported on *three different* compression ratios (see assertions about
     answers).
 
    What is true of the \ldquo{}mechanical infelicities\rdquo (misspelled words, grammatical
-   errors, punctuation errors) in my report of what I learned?
+   errors, punctuation errors) in our report of what we learned?
 #+name: assertions-about-MIs
   - [ ] There are fewer than four.
   - [ ] There are fewer than three.
@@ -748,34 +839,34 @@ n206
   - [ ] There are none.
 
 #+name: assertions-about-answers
-  - [X] I wrote an elisp function to make-frequency-table that takes a
+  - [X] We wrote an elisp function to make-frequency-table that takes a
     list-of-gaps and populates the data structure created by
     =(make-hash-table)=.
-  - [X] I wrote an elisp function to make-node-list-from-table that takes the
+  - [X] We wrote an elisp function to make-node-list-from-table that takes the
     table-of-frequencies and returns a list of nodes.
-  - [X] I wrote an elisp function to make-huffman-tree that takes the
+  - [X] We wrote an elisp function to make-huffman-tree that takes the
     list-of-nodes and returns a Huffman tree.
-  - [ ] I wrote an elisp function to get-a-gap-code-table that takes a Huffman
+  - [X] We wrote an elisp function to get-a-gap-code-table that takes a Huffman
     tree (or a list-of-nodes) and returns a code-list as a list of (gap . code)
     cons cells.
-  - [ ] I wrote an elisp function to encode the data given the list-of-gaps and
+  - [X] We wrote an elisp function to encode the data given the list-of-gaps and
     the code-list.
-  - [ ] I wrote an elisp function to encapsulate the above-mentioned elisp
+  - [X] We wrote an elisp function to encapsulate the above-mentioned elisp
     functions (in order) in one encode-first-ten-million-primes function that
     takes no parameters.
-  - [ ] I correctly calculated the number of keys in the hashtable of gap sizes.
-  - [ ] I correctly calculated the number of bits per key with a fixed encoding.
-  - [ ] I correctly calculated the total number of bits encoded with the Huffman
+  - [X] We correctly calculated the number of keys in the hashtable of gap sizes.
+  - [X] We correctly calculated the number of bits per key with a fixed encoding.
+  - [X] We correctly calculated the total number of bits encoded with the Huffman
     encoding.
-  - [ ] I correctly calculated the total number of bits encoded with the fixed
+  - [X] We correctly calculated the total number of bits encoded with the fixed
     encoding.
-  - [ ] I correctly calculated the compression ratio from this fixed encoding.
-  - [ ] I correctly calculated the size of the first ten million primes encoded
+  - [X] We correctly calculated the compression ratio from this fixed encoding.
+  - [X] We correctly calculated the size of the first ten million primes encoded
     as 32-bit integer binary data.
-  - [ ] I correctly calculated the compression ratio from the binary size.
-  - [ ] I correctly calculated the size of the first ten million primes encoded
+  - [X] We correctly calculated the compression ratio from the binary size.
+  - [X] We correctly calculated the size of the first ten million primes encoded
     as ASCII data.
-  - [ ] I correctly calculated the compression ratio from the ASCII size (just
+  - [X] We correctly calculated the compression ratio from the ASCII size (just
     the primes, nothing else).
 
 #+BEGIN_SRC elisp
