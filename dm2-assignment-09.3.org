@@ -538,7 +538,7 @@
 
     This requires running pretty much all the source blocks previous to this.
 
-#+BEGIN_SRC elisp :results silent
+#+BEGIN_SRC elisp :results raw
 
   (let ((x 5))
 
@@ -555,13 +555,14 @@
     (setq encoded-primes (get-encoded-primes)
           len-encoded (length encoded-primes))
     ;;encoded-primes ;; return that.
+    len-encoded
   )
 
 
-
-
-
 #+END_SRC
+
+#+RESULTS:
+44712373
 
 
 
