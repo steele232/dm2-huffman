@@ -224,70 +224,8 @@
       root))
 #+END_SRC
 
-* My Report
-** Explore Huffman Trees and Huffman Codes
-*** Make-Frequency-Table
+* The Functions
 
-#+BEGIN_SRC elisp
-  (setq list-of-gaps (list-the-gaps)
-        len (length list-of-gaps))
-#+END_SRC
-
-#+RESULTS:
-: 9999998
-
---> Show the last several lines
-#+BEGIN_SRC elisp
-   (subseq list-of-gaps 9999988) 
-#+END_SRC
-
-#+RESULTS:
-| 18 | 20 | 6 | 24 | 10 | 6 | 12 | 38 | 4 | 2 |
-
---> Here is the function that was requested.
-#+name: make-frequency-table
-#+BEGIN_SRC elisp :results silent
-
-  (defun make-frequency-table (lst-of-gaps)
-    "Make it!"
-    (let ((freq-table (make-hash-table)))
-      (loop for gap in lst-of-gaps
-            do (incf (gethash gap freq-table 0)))
-    freq-table))
-#+END_SRC
-
--> Set the hashmap as a global value
-#+BEGIN_SRC elisp :results silent
-  (setq f-table (make-frequency-table list-of-gaps))   
-#+END_SRC
-
--> Here is the result!
-#+BEGIN_SRC elisp
-  f-table
-#+END_SRC
-
-#+RESULTS:
-: #s(hash-table size 145 test eql rehash-size 1.5 rehash-threshold 0.8 data (2 738597 4 738717 6 1297540 8 566151 14 503524 10 729808 12 920661 18 667734 20 354267 22 307230 34 129043 24 453215 16 371677 26 211203 28 229177 30 398713 32 123123 36 206722 44 64866 42 159956 40 111546 52 38800 48 93693 38 94682 72 17255 50 52183 62 16763 54 64157 60 55305 58 27985 46 54931 56 32224 64 17374 68 12368 86 3411 66 30960 70 17475 78 13758 76 7253 82 4791 96 3544 112 711 100 1923 74 8540 90 7056 84 9818 114 1125 80 6760 88 3454 98 1831 92 2259 106 933 94 2058 118 433 132 301 104 1168 102 2374 110 941 126 533 120 948 148 67 108 1634 122 287 138 210 128 183 154 43 130 211 116 439 146 46 136 100 124 318 134 128 140 140 152 52 142 90 144 123 150 94 180 10 156 57 164 20 210 4 170 18 160 27 182 5 168 25 176 11 172 4 162 27 178 12 198 6 220 1 158 19 174 10 196 1 184 4 166 9 202 2 204 3 222 1 192 3 188 1 190 1 186 3 194 1))
-
-*** Make-Node-List-From-Table
-
---> Example of maphash function 
-(EXCEPT it Returns NIL has no other collection mechanism)
-#+BEGIN_SRC elisp :results silent
-  (maphash (lambda (key val)
-            (list "cstring" key val))
-   f-table)
-#+END_SRC
-
---> Example of looping over both KEYS and VALUES
-#+BEGIN_SRC elisp :results silent
-  (loop for key being the hash-keys of f-table 
-        using (hash-value value)
-        collect (list key value))
-#+END_SRC
-
---> Let's make the list of nodes! 
-(We do it in a let here first for experimentation.)
 #+BEGIN_SRC elisp :results silent
 
   (require 'cl)
@@ -410,7 +348,7 @@
     (and (integerp (get-value n1)) (integerp (get-value n2))
     (< (get-value n1) (get-value n2))))
 
-  ;;;; PSEUDOCODE ==> Supplied by Bro Neff in textbook.
+  ;;;; PSEUDOCODE ==> Supplied by Brother Neff in his textbook.
   ;; 
   ;; Algorithm Huffman Tree (inputs and initialization of Q as above)
   ;; while Q has more than one element do
@@ -493,10 +431,55 @@
       ""))
 #+END_SRC
 
+* Our Report
+** Explore Huffman Trees and Huffman Codes
+*** Make-Frequency-Table
+
+#+BEGIN_SRC elisp
+  (setq f-table (make-frequency-table list-of-gaps))   
+#+END_SRC
+
+--> Show the last several lines
+#+BEGIN_SRC elisp
+   (subseq list-of-gaps 9999988) 
+#+END_SRC
+
+#+RESULTS:
+| 18 | 20 | 6 | 24 | 10 | 6 | 12 | 38 | 4 | 2 |
+
+-> Here is the result!
+#+BEGIN_SRC elisp
+  f-table
+#+END_SRC
+
+#+RESULTS:
+: #s(hash-table size 145 test eql rehash-size 1.5 rehash-threshold 0.8 data (2 738597 4 738717 6 1297540 8 566151 14 503524 10 729808 12 920661 18 667734 20 354267 22 307230 34 129043 24 453215 16 371677 26 211203 28 229177 30 398713 32 123123 36 206722 44 64866 42 159956 40 111546 52 38800 48 93693 38 94682 72 17255 50 52183 62 16763 54 64157 60 55305 58 27985 46 54931 56 32224 64 17374 68 12368 86 3411 66 30960 70 17475 78 13758 76 7253 82 4791 96 3544 112 711 100 1923 74 8540 90 7056 84 9818 114 1125 80 6760 88 3454 98 1831 92 2259 106 933 94 2058 118 433 132 301 104 1168 102 2374 110 941 126 533 120 948 148 67 108 1634 122 287 138 210 128 183 154 43 130 211 116 439 146 46 136 100 124 318 134 128 140 140 152 52 142 90 144 123 150 94 180 10 156 57 164 20 210 4 170 18 160 27 182 5 168 25 176 11 172 4 162 27 178 12 198 6 220 1 158 19 174 10 196 1 184 4 166 9 202 2 204 3 222 1 192 3 188 1 190 1 186 3 194 1))
+
+*** Make-Node-List-From-Table
+
+--> Example of maphash function 
+(EXCEPT it Returns NIL has no other collection mechanism)
+#+BEGIN_SRC elisp :results silent
+  (maphash (lambda (key val)
+            (list "cstring" key val))
+   f-table)
+#+END_SRC
+
+--> Example of looping over both KEYS and VALUES
+#+BEGIN_SRC elisp :results silent
+  (loop for key being the hash-keys of f-table 
+        using (hash-value value)
+        collect (list key value))
+#+END_SRC
+
+--> Let's make the list of nodes! 
+(We do it in a let here first for experimentation.)
+
 #+BEGIN_SRC elisp
   (setq list-of-gaps (list-the-gaps)
         len (length list-of-gaps))
 
+  ; Set the hashmap as a global value
   (setq f-table (make-frequency-table list-of-gaps))   
 
   (setq list-of-nodes (make-node-list-from-table f-table))
@@ -513,6 +496,18 @@
         len-encoded (length encoded-primes))
 
 #+END_SRC
+
+#+BEGIN_SRC elisp :results output
+  (print "The last several gaps in the list of gaps:\n")
+  (print (subseq list-of-gaps 9999988))
+#+END_SRC
+
+#+RESULTS:
+: 
+: "The last several gaps in the list of gaps:
+: "
+: 
+: (18 20 6 24 10 6 12 38 4 2)
 
 -> play with exp-node-list to see if the plist got set right.
 #+BEGIN_SRC elisp :results code
@@ -746,7 +741,6 @@
     This requires running pretty much all the source blocks previous to this.
 
 #+BEGIN_SRC elisp :results raw
-
   (let ((x 5))
 
     ;; we will redo the list-of-nodes (which restarts the node-counter).
@@ -764,8 +758,6 @@
     ;;encoded-primes ;; return that.
     len-encoded
   )
-
-
 #+END_SRC
 
 #+RESULTS:
@@ -847,7 +839,7 @@ That's 44712373 bits in the huffman-encoding of the first ten million primes.
   
    So that is our encoding scheme, now how do we encode all 10 million primes?
    Well we just need to write down the spaces between the primes, so we would
-   need 9,999,999 consecutive sections of 7 bits; where each 7 bit segment
+   need 9,999,999 consecutive sections of 7 bits; where each 7-bit segment
    encodes the jump from the previous prime number to the next prime number. We
    only need one less than the number of numbers because the last prime number
    does not need a 7-bit jump to the 10,000,001^st prime number.
