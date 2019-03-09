@@ -255,6 +255,21 @@
       (set symbol node-counter)
       (incf node-counter)
       symbol))
+      
+   (defun make-node-with-properties (length frequency)
+     (let ((symbol (intern (concat "n" (number-to-string node-counter)))))
+       ;; If the symbol already exists in the obarray, it may not have an empty property list
+       ;; clear property list of interned symbol
+       (setf (symbol-plist symbol) nil)
+       (set symbol frequency)
+       ;; set the gap-length (of the node) in the node's plist
+       (put symbol :gap-length length)
+       ;; set the frequency (of the node) in the node's plist
+       (put symbol :frequency frequency)
+       ;; set an empty code in the plist
+       (put symbol :code "")
+       (incf node-counter)
+       symbol))
 
   (defun get-value (node)
     (and (symbolp node) (get node :frequency)))
@@ -513,17 +528,6 @@
 #+END_SRC
 
 
-
--> play with exp-node-list to see if the plist got set right.
-#+BEGIN_SRC elisp :results code
-
-  ;(symbol-plist (nth 0 exp-node-list)) ;-> Works. Has :gap-length and :frequency
-  ;(get-value (nth 0 exp-node-list)) ;-> Works! gets 738597 or whatever it is for 2
-  ;(nth 0 exp-node-list) ;-> "n0" or n0 depending on the ouptut
-  
-#+END_SRC
-
-#+RESULTS:
 #+begin_src elisp
 (:gap-length 2 :frequency 738597)
 #+end_src
