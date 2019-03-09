@@ -838,7 +838,7 @@ https://docs.google.com/spreadsheets/d/1gE7EWgS4wIwk83Ihqh6C-AOfHSLGAsq9a2HcooQc
 | Benj Jaffray         | YES                      | helped created get-a-gap-code-table                                                |                                 |
 | Anthony Lasley       | YES                      | helped created get-a-gap-code-table                                                |                                 |
 | Dylan Doelling       | YES                      | helped created get-a-gap-code-table                                                |                                 |
-| Justin Bengtson      |                          | Working on finding improvements and MIs                                            |                                 |
+| Justin Bengtson      | YES                      | Worked on finding improvements and MIs                                             |                                 |
 | Chase Jacobs         | YES                      | Worked on the "CLEAN UP" todo, as well as changed assertions to be classwide       |                                 |
 | Jonathon Dawson      | YES                      | Worked on finding MIs                                                              |                                 |
 | Grayson Hadley       | YES                      | Verfied the "make-huffman-tree" function using the list of nodes                   | Created "get-ancestry" function |
@@ -847,32 +847,32 @@ https://docs.google.com/spreadsheets/d/1gE7EWgS4wIwk83Ihqh6C-AOfHSLGAsq9a2HcooQc
 | Ty Kennington        | YES                      | Made this table                                                                    | This table                      |
 | Taylor Isaacson      | YES                      | helped helped created get-a-gap-code-table                                         |                                 |
 | Jonathan Steele      | YES                      | Helped manage Repo as repo-owner, wrote a lot of Elisp code, ask lots of questions | Starter Code for steps #1-3     |
-| Mikah Chapman        |                          |                                                                                    |                                 |
+| Mikah Chapman        | YES                      | Contributed a bunch of code                                                        | Code in many sections           |
 | Will Mildenhall      | YES                      | Document edits, finding multiple MIs throughout to be corrected.                   |                                 |
 | Justin Chandler      | YES                      | Worked on creating a new and improved "make-node" function.                        |                                 |
 | Joshua Mathews       | YES                      | helped created get-a-gap-code-table                                                |                                 |
-| Joshua Berensen      |                          | Working on finding improvements and MIs                                            |                                 |
+| Joshua Berensen      | YES                      | Worked on finding improvements and MIs                                             |                                 |
 | Ronald Munoz         | YES                      | Worked on creating a "make-new-node" function.                                     | Elisp function                  |
 | Preston Higgins      | YES                      | Worked on the "clean up/improve" the make-gap-table functionality. Fixed some MI's |                                 |
-| Taylor Matheny       |                          |                                                                                    |                                 |
+| Taylor Matheny       | YES                      | Verified the "make-huffman-tree" function using the list of nodes                  |                                 |
 | Cameron Smith        | YES                      | Worked on finding improvements and MI's                                            |                                 |
 | Madison Sheridan     | YES                      | Worked on the "clean up/improve" the make-gap-table functionality. Fixed some MIs  |                                 |
-| Ashley Loo           |                          | Working on improving the get-a-gap-code-table by using a maphash instead of loop   |                                 |
-| Kathryn Hollingshead |                          | Working on finding improvements and MIs                                            |                                 |
-| Zach Newell          | YES                      | Verfied the "make-huffman-tree" function using the list of nodes                   |                                 |
-| Luke Hagen           |                          |                                                                                    |                                 |
+| Ashley Loo           | YES                      | Worked on improving the get-a-gap-code-table                                       |                                 |
+| Kathryn Hollingshead | YES                      | Worked on finding improvements and MIs                                             |                                 |
+| Zach Newell          | YES                      | Verified the "make-huffman-tree" function using the list of nodes                  |                                 |
+| Luke Hagen           | YES                      | Verified the "make-huffman-tree" function using the list of nodes                  |                                 |
 | Michael Capawana     | YES                      | Worked on the "CLEAN UP" todo, as well as changed assertions to be classwide       |                                 |
 | Jonathan Comeau      | YES                      | worked with Curtis Wakley on converting the node list into a maphash               |                                 |
 | Matt Wyndham         | YES                      | Worked on Compression Ratios sections and helped verify Huffman Encoding           | Compression Ratios sections     |
-| Brendon Welker       |                          |                                                                                    |                                 |
+| Brendon Welker       | YES                      | Helped individuals with GitHub/Git issues and helped with this table               | This table                      |
 | Tyler Brundage       |                          |                                                                                    |                                 |
 | Andrew Payne         | YES                      | Checking for and correcting MIs                                                    |                                 |
 | Samuel Tew           | YES                      | helped created get-a-gap-code-table                                                |                                 |
-| Paul Land            |                          | Working on finding improvements and MIs                                            |                                 |
-| Greg De Ligne        |                          | Working on finding improvements and MIs                                            |                                 |
+| Paul Land            | YES                      | Worked on finding improvements and MIs                                             |                                 |
+| Greg De Ligne        | YES                      | Worked on finding improvements and MIs                                             |                                 |
 |                      |                          |                                                                                    |                                 |
 |                      |                          |                                                                                    |                                 |
-|                      | 69.44% Participation     |                                                                                    |                                 |
+|                      | 97.22% Participation     |                                                                                    |                                 |
 
 
 * TODO What Is True?
