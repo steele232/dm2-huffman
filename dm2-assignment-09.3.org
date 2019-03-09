@@ -286,8 +286,12 @@
         collect (list key value))
 #+END_SRC
 
---> Let's make the list of nodes! 
-(We do it in a let here first for experimentation.)
+*** The Function Block
+    This massive code block contains a plethora of functions that implement the functionality we
+    need in order to create huffman tress so that the list of prime numbers can be compressed.
+    Some of the code included in the original assignment document has been included again to make
+    it easy to load all of the needed functions when opening the document.
+
 #+BEGIN_SRC elisp :results silent
 
   (require 'cl)
@@ -492,6 +496,11 @@
       ;; SEPARATOR
       ""))
 #+END_SRC
+
+*** =setq= Definitions
+    These =setq= definitions have been seperated from the main function block
+    to make sure people don't have to wait for these to run when they want to
+    make changes to function definitions.
 
 #+BEGIN_SRC elisp
   (setq list-of-gaps (list-the-gaps)
