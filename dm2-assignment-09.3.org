@@ -436,16 +436,39 @@
       ""))
 #+END_SRC
 
-<<<<<<< HEAD
 *** =setq= Definitions
     These =setq= definitions have been seperated from the main function block
     to make sure people don't have to wait for these to run when they want to
     make changes to function definitions.
-=======
+
+#+BEGIN_SRC elisp
+  (setq list-of-gaps (list-the-gaps)
+        len (length list-of-gaps))
+
+  ; Set the hashmap as a global value
+  (setq f-table (make-frequency-table list-of-gaps))   
+
+  (setq list-of-nodes (make-node-list-from-table f-table))
+
+  (setq backup-list-of-nodes 
+    (loop for sym in list-of-nodes
+          collect sym))
+
+  (setq huffman-tree (make-huffman-tree list-of-nodes))
+  
+  (setq gap-code-table (get-a-gap-code-table))
+
+  (setq encoded-primes (get-encoded-primes)
+        len-encoded (length encoded-primes))
+
+#+END_SRC
+
+
 * Our Report
 ** Explore Huffman Trees and Huffman Codes
 *** Make-Frequency-Table
 
+--> Creating the frequency
 #+BEGIN_SRC elisp
   (setq f-table (make-frequency-table list-of-gaps))   
 #+END_SRC
@@ -484,30 +507,6 @@
 #+END_SRC
 
 --> Let's make the list of nodes! 
-(We do it in a let here first for experimentation.)
->>>>>>> fbc567494fecb3de14b556155cd28f55ad80afe1
-
-#+BEGIN_SRC elisp
-  (setq list-of-gaps (list-the-gaps)
-        len (length list-of-gaps))
-
-  ; Set the hashmap as a global value
-  (setq f-table (make-frequency-table list-of-gaps))   
-
-  (setq list-of-nodes (make-node-list-from-table f-table))
-
-  (setq backup-list-of-nodes 
-    (loop for sym in list-of-nodes
-          collect sym))
-
-  (setq huffman-tree (make-huffman-tree list-of-nodes))
-  
-  (setq gap-code-table (get-a-gap-code-table))
-
-  (setq encoded-primes (get-encoded-primes)
-        len-encoded (length encoded-primes))
-
-#+END_SRC
 
 #+BEGIN_SRC elisp :results output
   (print "The last several gaps in the list of gaps:\n")
